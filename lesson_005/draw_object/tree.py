@@ -28,10 +28,3 @@ def draw_branches_rand(start_point=sd.get_point(300, 30), angle=90, length=100):
 
     draw_branches_rand(start_point=next_point1, angle=next_angle1, length=next_length)
     draw_branches_rand(start_point=next_point2, angle=next_angle2, length=next_length)
-
-
-# root_point = sd.get_point(300, 30)
-# draw_branches_rand(start_point=root_point, angle=90, length=120)
-# ===========================================================================================
-
-

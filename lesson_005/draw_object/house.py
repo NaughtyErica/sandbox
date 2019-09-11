@@ -50,21 +50,14 @@ def draw_window(bottom_left=sd.get_point(0, 0),
 
 
 def draw_house(bottom_left=sd.get_point(0, 0), top_right=sd.get_point(400, 200),
-               win_l=150, win_h=100, brick_l=100, brick_h=50):
+               window_length=150, window_height=100, brick_l=100, brick_h=50):
     draw_wall(bottom_left=bottom_left, top_right=top_right, brick_l=brick_l, brick_h=brick_h)
     roof_bottom_left = sd.get_point(bottom_left.x, top_right.y)
     draw_roof(point_left=roof_bottom_left, length=top_right.x - bottom_left.x)
-    win_bottom_left_x = bottom_left.x + (top_right.x - bottom_left.x) // 2 - win_l // 2
-    win_bottom_left_y = bottom_left.y + (top_right.y - bottom_left.y) // 2 - win_h // 2
+    win_bottom_left_x = bottom_left.x + (top_right.x - bottom_left.x) // 2 - window_length // 2
+    win_bottom_left_y = bottom_left.y + (top_right.y - bottom_left.y) // 2 - window_height // 2
     win_bottom_left = sd.get_point(win_bottom_left_x, win_bottom_left_y)
-    win_top_right_x = win_bottom_left_x + win_l
-    win_top_right_y = win_bottom_left_y + win_h
+    win_top_right_x = win_bottom_left_x + window_length
+    win_top_right_y = win_bottom_left_y + window_height
     win_top_right = sd.get_point(win_top_right_x, win_top_right_y)
     draw_window(win_bottom_left, win_top_right)
-
-
-# bl = sd.get_point(120, 60)
-# tr = sd.get_point(420, 330)
-# sd.resolution = (1200, 600)
-# draw_house(bottom_left=bl, top_right=tr, win_l=120, win_h=100, brick_l=60, brick_h=30)
-# sd.pause()

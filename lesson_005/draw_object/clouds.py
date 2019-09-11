@@ -1,10 +1,15 @@
-
 import simple_draw as sd
 
 
+clouds_list_coord = [(0, 570, 50),
+                     (80, 570, 70),
+                     (150, 570, 40),
+                     (200, 570, 50),
+                     (270, 570, 40),
+                     ]
+
+
 def draw_clouds():
-        sd.circle(center_position=sd.get_point(0, 570), radius=50, width=0, color=sd.COLOR_WHITE)
-        sd.circle(center_position=sd.get_point(80, 570), radius=70, width=0, color=sd.COLOR_WHITE)
-        sd.circle(center_position=sd.get_point(150, 570), radius=40, width=0, color=sd.COLOR_WHITE)
-        sd.circle(center_position=sd.get_point(200, 570), radius=50, width=0, color=sd.COLOR_WHITE)
-        sd.circle(center_position=sd.get_point(270, 570), radius=40, width=0, color=sd.COLOR_WHITE)
+    for coord in clouds_list_coord:
+        sd.circle(center_position=sd.get_point(coord[0], coord[1]), radius=coord[2],
+                  width=0, color=sd.COLOR_WHITE)

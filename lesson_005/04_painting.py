@@ -28,8 +28,8 @@ from lesson_005.draw_object import snow_melts
 from lesson_005.draw_object import smile
 sd.resolution = (1200, 600)
 
-bl = sd.get_point(300, 1)
-tr = sd.get_point(660, 211)
+bottom_left_house_margin = sd.get_point(300, 1)
+top_right_house_margin = sd.get_point(660, 211)
 
 N = 20
 center_snowflake = []
@@ -45,7 +45,8 @@ for i in range(N):
     center_snowflake.append(coord_xy)
     length_beam.append(sd.random_number(15, 20))
 
-house.draw_house(bottom_left=bl, top_right=tr, win_l=120, win_h=100, brick_l=60, brick_h=30)
+house.draw_house(bottom_left=bottom_left_house_margin, top_right=top_right_house_margin,
+                 window_length=120, window_height=100, brick_l=60, brick_h=30)
 smile.draw_smile(open_eye=1)
 tree.draw_branches_rand(start_point=sd.get_point(1000, 1))
 
@@ -82,7 +83,7 @@ while True:
 
     if drift == 20:
         center_rainbow = sd.get_point(400, -50)
-        rainbow.draw_rainbow(center_point=center_rainbow, radius=800)
+        rainbow.draw_rainbow(center_rainbow=center_rainbow, radius=800)
     if drift > 20:
         snow_melts.melts(depth=(drift - 20) * 2)
     if drift % 2 == 0:
@@ -95,9 +96,3 @@ while True:
         break
 
 sd.pause()
-
-
-# Усложненное задание (делать по желанию)
-# Анимировать картину.
-# Пусть слева идет снегопад, радуга переливается цветами, смайлик моргает, солнце крутит лучами, етс.
-# Задержку в анимировании все равно надо ставить, пусть даже 0.01 сек - так библиотека устойчивей работает.
