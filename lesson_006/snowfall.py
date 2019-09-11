@@ -7,11 +7,12 @@ lst_factor = [[0.4, 0.5, 0.6, 0.7, 0.8],
               [0.25, 0.3, 0.35, 0.4, 0.45],
               [50, 55, 60, 65, 70],
               ]
-# factor_a=0.6, factor_b=0.35, factor_c=60
+# default value: factor_a=0.6, factor_b=0.35, factor_c=60
+wind_direction = 0
 
 
 def create_snowflakes_pos(quantity=20, position_add=0, resolution=(1200, 600),
-                          len_beam_min_max=(15, 20), factor_abc=(0.6, 0.35, 60)):
+                          len_beam_min_max=(15, 20)):
     global quantity_snow_flakes, center_and_beams_snowflakes, lst_factor
     count_create = quantity
     coord_x = (-100, resolution[0] + 100)
@@ -41,7 +42,7 @@ def create_snowflakes_pos(quantity=20, position_add=0, resolution=(1200, 600),
       
 
 def create_snowflakes(quantity=20, resolution=(1200, 600),
-                      len_beam_min_max=(15, 35), factor_abc=(0.6, 0.35, 60)):
+                      len_beam_min_max=(15, 35)):
 
     global quantity_snow_flakes, center_and_beams_snowflakes, lst_factor
     count_create = quantity
@@ -64,7 +65,6 @@ def create_snowflakes(quantity=20, resolution=(1200, 600),
         coord_center_len_beam.append(factor_b)
         coord_center_len_beam.append(factor_c)
         center_and_beams_snowflakes.append(coord_center_len_beam)
-    print("Стало", quantity_snow_flakes)
     return quantity_snow_flakes
 
 
@@ -86,9 +86,9 @@ def draw_snow_flakes(color=sd.COLOR_YELLOW):
 
 
 def shift_coord_snow_flakes():
-    global quantity_snow_flakes, center_and_beams_snowflakes
+    global quantity_snow_flakes, center_and_beams_snowflakes, wind_direction
     for i in range(quantity_snow_flakes):
-        center_and_beams_snowflakes[i][0] += sd.random_number(-10, 10)
+        center_and_beams_snowflakes[i][0] += sd.random_number(-10, 10) + wind_direction * 20
         center_and_beams_snowflakes[i][1] -= sd.random_number(10, 20)
 
 
@@ -105,22 +105,30 @@ def thin_snow():
         if center_and_beams_snowflakes[i][1] > 800:
             number_snowflake_upper.append(i)
     count_upper = len(number_snowflake_upper)
-    quantity = count_upper // 2
+    # quantity = count_upper // 2
     # for i in range(quantity):
     #     center_and_beams_snowflakes.pop(number_snowflake_upper[i])
     #     quantity_snow_flakes -= 1
     if count_upper > 0:
-        print("Номер снежинки", number_snowflake_upper[0])
-        print(center_and_beams_snowflakes.pop(number_snowflake_upper[0]))
+        # print("Номер снежинки", number_snowflake_upper[0])
+        # print(center_and_beams_snowflakes.pop(number_snowflake_upper[0]))
         quantity_snow_flakes -= 1
-        print("Отсалось", quantity_snow_flakes)
+    # print("Отсалось", quantity_snow_flakes)
 
 
 def list_flown_bottom():
-    global quantity_snow_flakes, center_and_beams_snowflakes
+    global quantity_snow_flakes, center_and_beams_snowflakes, wind_direction
     number_snowflake_bottom = []
+    wind_direction = 0
     for i in range(quantity_snow_flakes):
         if center_and_beams_snowflakes[i][1] < 0 - 35:
             number_snowflake_bottom.append(i)
     return number_snowflake_bottom
 
+
+def wind(direction=0):
+    global wind_direction
+    if direction == 1:
+        wind_direction = 1
+    elif direction == -1:
+        wind_direction = -1

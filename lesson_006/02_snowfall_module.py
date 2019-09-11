@@ -2,11 +2,16 @@
 import pygame
 import simple_draw as sd
 import lesson_006.snowfall as snow
-# создать_снежинки(N)
-tick = 0
+
+
 count_snow_flakes = 0
 resolution_screen = sd.resolution = (1200, 600)
 snow.create_snowflakes(quantity=20, resolution=resolution_screen)
+print("Усиление снегопада - S")
+print("Уменьшение снегопада - W")
+print("Ветер справа - A")
+print("Ветер слева - D")
+print("Клавиши нажимать дробно. Усиление +5 снежинок, уменьшение -1")
 while True:
     sd.start_drawing()
     snow.draw_snow_flakes(color=sd.background_color)
@@ -20,22 +25,16 @@ while True:
             snow.create_snowflakes_pos(quantity=1, position_add=lst_bottom[i], resolution=resolution_screen)
     sd.finish_drawing()
     for event in pygame.event.get():
-        # if event.type == pygame.QUIT:  # нажатие на крестик: выход
-        #     running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_s:
-                count_snow_flakes = snow.create_snowflakes(quantity=10, resolution=resolution_screen)
-                print("увеличиваем")
+                count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
             if event.key == pygame.K_w:
                 snow.thin_snow()
-                print("уменьшаем")
-
+            if event.key == pygame.K_a:
+                snow.wind(direction=-1)
+            if event.key == pygame.K_d:
+                snow.wind(direction=1)
     sd.sleep(0.1)
-    tick += 1
-    # if tick % 1000:
-    #     count_snow_flakes = snow.create_snowflakes(quantity=1, resolution=resolution_screen)
     if sd.user_want_exit() or count_snow_flakes > 200:
         break
-
-
 sd.pause()
