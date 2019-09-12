@@ -65,6 +65,7 @@ def create_snowflakes(quantity=20, resolution=(1200, 600),
         coord_center_len_beam.append(factor_b)
         coord_center_len_beam.append(factor_c)
         center_and_beams_snowflakes.append(coord_center_len_beam)
+    print("Снежинок стало", quantity_snow_flakes)
     return quantity_snow_flakes
 
 
@@ -110,10 +111,9 @@ def thin_snow():
     #     center_and_beams_snowflakes.pop(number_snowflake_upper[i])
     #     quantity_snow_flakes -= 1
     if count_upper > 0:
-        # print("Номер снежинки", number_snowflake_upper[0])
-        # print(center_and_beams_snowflakes.pop(number_snowflake_upper[0]))
+        center_and_beams_snowflakes.pop(number_snowflake_upper[0])
         quantity_snow_flakes -= 1
-    # print("Отсалось", quantity_snow_flakes)
+    print("Осталось снежинок", quantity_snow_flakes)
 
 
 def list_flown_bottom():
@@ -130,5 +130,7 @@ def wind(direction=0):
     global wind_direction
     if direction == 1:
         wind_direction = 1
+        print("Ветер слева")
     elif direction == -1:
         wind_direction = -1
+        print("Ветер справа")

@@ -43,4 +43,29 @@
 # Это пример применения SOLID принципа (см https://goo.gl/GFMoaI) в архитектуре программ.
 # Точнее, в этом случае важен принцип единственной ответственности - https://goo.gl/rYb3hT
 
-# TODO здесь ваш код...
+import lesson_006.mastermind_engine as me
+user_input_str = ''
+
+while True:
+    step_game = 0
+    user_select_char = input('Начинаем новую игру!\n'
+                             'Для выхода нажмите q для продолжения c  --> ')
+    if user_select_char == 'q':
+        break
+    me.pick_number()
+    print('Компьютер загадал четырехзначное число, попытайтесь его отгадать')
+    while True:
+        user_input_str = input('Введите число или l если сдаетесь --> ')
+        if user_input_str == 'l':
+            break
+        else:
+            result = me.check_number(user_input_str=user_input_str)
+            print('Быки -', result['bulls'], 'Коровы -', result['cows'])
+            step_game += 1
+            if result['bulls'] == 4:
+                print('Вы угадали за', step_game, 'ходов')
+                continue_or_exit = input('Хотите еще партию? (y/n)')
+                if continue_or_exit == 'n':
+                    raise SystemExit(0)
+                else:
+                    break
