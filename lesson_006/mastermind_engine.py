@@ -38,3 +38,5 @@ def check_number(user_input_str=''):
     answer['bulls'] = bulls
     answer['cows'] = cows
     return answer
+
+
