@@ -24,7 +24,6 @@ def check_number(user_input_str=''):
     global user_number_lst, search_number_lst
     answer = {}
     user_number_lst = list(user_input_str)
-    print('Ввод игрока', user_number_lst)
     bulls = 0
     cows = 0
     for i in range(len(user_number_lst)):
@@ -36,7 +35,6 @@ def check_number(user_input_str=''):
             if user_number_lst[i] in search_number_lst:
                 cows += 1
                 user_number_lst[i] = 'c'
-    print(user_number_lst)
     answer['bulls'] = bulls
     answer['cows'] = cows
     return answer

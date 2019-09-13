@@ -46,26 +46,56 @@
 import lesson_006.mastermind_engine as me
 user_input_str = ''
 
+
+def validator_input_number(input_str=''):
+    error_input = True
+    while error_input:
+        if input_str[0] != '0':
+            if input_str.isdigit():
+                if len(set(input_str)) == 4:
+                    error_input = False
+        if error_input:
+            print('Не корректный ввод! Допустимые значания 1234567890, \n'
+                  'четыре цифры, все разные, первая не 0')
+            input_str = input('Попробуйте еще раз -->')
+    return input_str
+
+
+def validator_yse_no(input_str=''):
+    while input_str not in ('y', 'n'):
+        print('Не корректный ввод! Допустимые значания y/n')
+        input_str = input('Попробуйте еще раз -->')
+    return input_str
+
+
+print('Начинаем игру "Быки и Коровы". Я задумываю четырехзначное число,\n'
+      'все цифры которого различны (первая цифра числа отлична от нуля).\n'
+      'Вам необходимо разгадать задуманное число. Вы вводите четырехзначное\n'
+      'число c неповторяющимися цифрами, я сообщаю о количестве «быков» и «коров»\n'
+      'в названном числе. «Бык» — цифра есть в записи задуманного числа и стоит\n'
+      'в той же позиции, что и в задуманном числе, «Корова» — цифра есть в записи\n'
+      'задуманного числа, но не стоит в той же позиции, что в задуманном числе')
+
+
 while True:
     step_game = 0
-    user_select_char = input('Начинаем новую игру!\n'
-                             'Для выхода нажмите q для продолжения c  --> ')
-    if user_select_char == 'q':
-        break
     me.pick_number()
-    print('Компьютер загадал четырехзначное число, попытайтесь его отгадать')
+    print('Я загадал четырехзначное число, попытайтесь его отгадать')
     while True:
-        user_input_str = input('Введите число или l если сдаетесь --> ')
-        if user_input_str == 'l':
-            break
+        user_input_str = input('Введите число или <q> если сдаетесь --> ')
+        if user_input_str == 'q':
+            print('Очень жаль, что не закончили партию!')
+            raise SystemExit(0)
         else:
+            user_input_str = validator_input_number(input_str=user_input_str)
             result = me.check_number(user_input_str=user_input_str)
             print('Быки -', result['bulls'], 'Коровы -', result['cows'])
             step_game += 1
             if result['bulls'] == 4:
                 print('Вы угадали за', step_game, 'ходов')
-                continue_or_exit = input('Хотите еще партию? (y/n)')
+                continue_or_exit = validator_yse_no(input_str=input('Хотите еще партию? <y/n>'))
                 if continue_or_exit == 'n':
+                    print('Спасибо за игру!')
                     raise SystemExit(0)
                 else:
                     break
