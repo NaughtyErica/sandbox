@@ -17,7 +17,7 @@ def pick_number():
         elif step > 1:
             list_select.remove(number)
             search_number_lst.append(number)
-    print('Загаданное число', search_number_lst)
+    # print('Загаданное число', search_number_lst)
 
 
 def check_number(user_input_str=''):
@@ -38,5 +38,3 @@ def check_number(user_input_str=''):
     answer['bulls'] = bulls
     answer['cows'] = cows
     return answer
-
-
