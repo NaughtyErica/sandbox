@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import pygame
 import simple_draw as sd
+
 import lesson_006.snowfall as snow
 
 
@@ -24,17 +25,20 @@ while True:
             snow.del_snow_flake(number_snow_flake=lst_bottom[i])
             snow.create_snowflakes_pos(quantity=1, position_add=lst_bottom[i], resolution=resolution_screen)
     sd.finish_drawing()
-    for event in pygame.event.get():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_s:
-                count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
-            if event.key == pygame.K_w:
-                snow.thin_snow()
-            if event.key == pygame.K_a:
-                snow.wind(direction=-1)
-            if event.key == pygame.K_d:
-                snow.wind(direction=1)
+    # В таком вариант у меня устойчиво ловит команды клавиатуры, правда иногда дублирует их
+    # а в предыдущем варианте почти не работало
+    keyState = pygame.key.get_pressed()
+    if keyState[pygame.K_s]:
+        count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
+    if keyState[pygame.K_w]:
+        snow.thin_snow()
+    if keyState[pygame.K_a]:
+        snow.wind(direction=-1)
+    if keyState[pygame.K_d]:
+        snow.wind(direction=1)
     sd.sleep(0.1)
     if sd.user_want_exit() or count_snow_flakes > 200:
         break
 sd.pause()
+
+# зачет!

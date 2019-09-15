@@ -48,17 +48,13 @@ user_input_str = ''
 
 
 def validator_input_number(input_str=''):
-    error_input = True
-    while error_input:
-        if input_str[0] != '0':
-            if input_str.isdigit():
-                if len(set(input_str)) == 4:
-                    error_input = False
-        if error_input:
+    while True:
+        if input_str[0] != '0' and input_str.isdigit() and len(set(input_str)) == 4:
+            return input_str
+        else:
             print('Не корректный ввод! Допустимые значания 1234567890, \n'
                   'четыре цифры, все разные, первая не 0')
             input_str = input('Попробуйте еще раз -->')
-    return input_str
 
 
 def validator_yse_no(input_str=''):
