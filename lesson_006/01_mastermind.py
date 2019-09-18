@@ -95,5 +95,3 @@ while True:
                     raise SystemExit(0)
                 else:
                     break
-
-# зачет!

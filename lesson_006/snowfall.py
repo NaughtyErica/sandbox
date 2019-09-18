@@ -128,9 +128,9 @@ def list_flown_bottom():
 
 def wind(direction=0):
     global wind_direction
-    if direction == 1:
-        wind_direction = 1
+    wind_direction = direction
+    # Так проще использовать функцию
+    if direction > 0:
         print("Ветер слева")
-    elif direction == -1:
-        wind_direction = -1
+    elif direction < 0:
         print("Ветер справа")
