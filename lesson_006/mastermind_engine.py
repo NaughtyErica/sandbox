@@ -10,8 +10,8 @@ def pick_number():
     step = 1
     while len(search_number_lst) <= 3:
         number = rd.choice(list_select)
-        step += 1
         if number != '0' or step != 1:
+            step += 1
             list_select.remove(number)
             search_number_lst.append(number)
 #    print('Загаданное число', search_number_lst)
