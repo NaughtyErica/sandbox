@@ -7,11 +7,11 @@ def pick_number():
     global search_number_lst
     search_number_lst = []
     list_select = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
-    step = 0
+    step = 1
     while len(search_number_lst) <= 3:
-        step += 1
         number = rd.choice(list_select)
         if number != '0' or step != 1:
+            step += 1
             list_select.remove(number)
             search_number_lst.append(number)
 #    print('Загаданное число', search_number_lst)
