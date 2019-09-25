@@ -12,23 +12,23 @@ class Robot:
     def hello(self):
         print('привет мир!')
 
-
+#
 robot = Robot()
-robot.temperature = 1
-while robot.temperature < 10:
-    robot.temperature *= 2
-print(robot.temperature)
-del robot.temperature
+# robot.temperature = 1
+# while robot.temperature < 10:
+#     robot.temperature *= 2
+# print(robot.temperature)
+# del robot.temperature
 
 # Атрибуты сохраняются в пространстве имен каждого объекта - у разных объектов они м.б. разные
 
 robot_2 = Robot()
 robot_2.name = 'Валли'
-
-print(robot.name, robot_2.name)
-
-print(robot, robot_2)
-print(robot == robot_2, robot is robot_2)
+#
+# print(robot.name, robot_2.name)
+#
+# print(robot, robot_2)
+# print(robot == robot_2, robot is robot_2)
 
 
 # Полезные функции для работы с атрибутами
@@ -43,17 +43,18 @@ if hasattr(robot, attr_name):
 else:
     setattr(robot, attr_name, 'android')
 print(robot.model)
-delattr(robot, attr_name)
+# delattr(robot, attr_name)
 
 # то есть можно устанавливать атрибуты динамически, по именам
 for attr_name in ('weight', 'height', ):
     setattr(robot, attr_name, 42)
-print(hasattr(robot, 'weight'))
-print(robot.weight)
-
-# getattr(object, name, default=None) - получение атрибута
+# print('Имеет атрибут вес ', hasattr(robot, 'weight'))
+# print(robot.weight)
+#
+# # getattr(object, name, default=None) - получение атрибута
 print(getattr(robot, 'weight'))
-print(getattr(robot, 'speed', 10))
-
+sp = getattr(robot, 'speed', 10)
+print(sp)
+print(dir(robot))
 
 

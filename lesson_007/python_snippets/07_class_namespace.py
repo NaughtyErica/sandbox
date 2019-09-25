@@ -51,12 +51,12 @@ class Lemming:
     def __init__(self):
         self.tail_length = randint(15, 25)
         self.name = choice(Lemming.names)
-        self.total = self.total + 1
+        Lemming.total = Lemming.total + 1
 
     def __str__(self):
-        return 'Lemming ' + self.name + ' with tail ' + str(self.tail_length)
+        return 'Lemming ' + self.name + ' with tail ' + str(self.tail_length) + '# ' + str(self.total)
 
-
+print('===============================')
 burrow = []
 burrow_depth = randint(90, 100)
 while len(burrow) < burrow_depth:
@@ -64,12 +64,14 @@ while len(burrow) < burrow_depth:
     family_size = randint(16, 32)
     while len(family) < family_size:
         new_lemming = Lemming()
+        print(new_lemming)
         family.append(new_lemming)
+
     burrow.append(family)
 print(Lemming.total)
 print(len(burrow))
 
-
+print('===============================')
 # А что с обычными переменными? все так же как для функций
 
 
