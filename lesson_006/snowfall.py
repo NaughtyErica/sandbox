@@ -106,10 +106,6 @@ def thin_snow():
         if center_and_beams_snowflakes[i][1] > 800:
             number_snowflake_upper.append(i)
     count_upper = len(number_snowflake_upper)
-    # quantity = count_upper // 2
-    # for i in range(quantity):
-    #     center_and_beams_snowflakes.pop(number_snowflake_upper[i])
-    #     quantity_snow_flakes -= 1
     if count_upper > 0:
         center_and_beams_snowflakes.pop(number_snowflake_upper[0])
         quantity_snow_flakes -= 1

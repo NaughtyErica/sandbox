@@ -7,7 +7,7 @@ import lesson_006.snowfall as snow
 
 count_snow_flakes = 0
 resolution_screen = sd.resolution = (1200, 600)
-snow.create_snowflakes(quantity=20, resolution=resolution_screen)
+snow.create_snowflakes_pos(quantity=20, resolution=resolution_screen)
 print("Усиление снегопада - S")
 print("Уменьшение снегопада - W")
 print("Ветер справа - A")
