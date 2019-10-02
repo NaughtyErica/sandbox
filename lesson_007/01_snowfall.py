@@ -44,7 +44,7 @@ class Snowflake:
     #     Snowflake.quantity_snow_flakes -= 1
     #     Snowflake.list_snow_flakes.pop(position)
 
-    def draw_snow_flake(self, color=sd.COLOR_YELLOW):
+    def draw_snow_flake(self, color=sd.COLOR_WHITE):
         """
             factor_a=0.6, factor_b=0.35, factor_c=60
             factor_a - место ответвления лучиков
@@ -89,9 +89,9 @@ class Snowflake:
                 Snowflake.list_snow_flakes.insert(Snowflake.number_snowflake_bottom[fl], cls())
 
     @classmethod
-    def draw_all_snow_flakes(cls, color=sd.COLOR_YELLOW):
+    def draw_all_snow_flakes(cls, color=sd.COLOR_WHITE):
         for fl in range(Snowflake.quantity_snow_flakes):
-            cls.draw_snow_flake()
+            Snowflake.draw_snow_flake(color=color)
 
 
     # def del_snow_flake(self, number_snow_flake=0):
@@ -128,17 +128,21 @@ class Snowflake:
     #     elif direction < 0:
     #         print("Ветер справа")
 
-# flake = Snowflake()
-#
-# while True:
-#     flake.clear_previous_picture()
-#     flake.move()
-#     flake.draw()
-#     if not flake.can_fall():
-#         break
-#     sd.sleep(0.1)
-#     if sd.user_want_exit():
-#         break
+flake = Snowflake()
+
+while True:
+    sd.start_drawing()
+    flake.draw_snow_flake(color=sd.background_color)
+    flake.shift_coord_snow_flake()
+    flake.draw_snow_flake(color=sd.COLOR_WHITE)
+    if flake.center_and_beams_snowflake[1] < 0 - 35:
+        del flake
+        flake = Snowflake()
+
+    sd.finish_drawing()
+    sd.sleep(0.1)
+    if sd.user_want_exit():
+        break
 
 # шаг 2: создать снегопад - список объектов Снежинка в отдельном списке, обработку примерно так:
 # flakes = get_flakes(count=N)  # создать список снежинок
@@ -154,39 +158,39 @@ class Snowflake:
 #     if sd.user_want_exit():
 #         break
 
-count_snow_flakes = 0
-resolution_screen = sd.resolution = (1200, 600)
-Snowflake.create_list_snow_flakes(quantity=20)
-# print("Усиление снегопада - S")
-# print("Уменьшение снегопада - W")
-# print("Ветер справа - A")
-# print("Ветер слева - D")
-# print("Клавиши нажимать дробно. Усиление +5 снежинок, уменьшение -1")
-while True:
-    sd.start_drawing()
-    snow.draw_snow_flakes(color=sd.background_color)
-    snow.shift_coord_snow_flakes()
-    snow.draw_snow_flakes(color=sd.COLOR_WHITE)
-    lst_bottom = snow.list_flown_bottom()
-    quantity_deleted = len(lst_bottom)
-    if quantity_deleted > 0:
-        for i in range(quantity_deleted):
-            snow.del_snow_flake(number_snow_flake=lst_bottom[i])
-            snow.create_snowflakes_pos(quantity=1, position_add=lst_bottom[i], resolution=resolution_screen)
-    sd.finish_drawing()
-    # В таком вариант у меня устойчиво ловит команды клавиатуры, правда иногда дублирует их
-    # а в предыдущем варианте почти не работало
-    keyState = pygame.key.get_pressed()
-    if keyState[pygame.K_s]:
-        count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
-    if keyState[pygame.K_w]:
-        snow.thin_snow()
-    if keyState[pygame.K_a]:
-        snow.wind(direction=-1)
-    if keyState[pygame.K_d]:
-        snow.wind(direction=1)
-    sd.sleep(0.1)
-    if sd.user_want_exit() or count_snow_flakes > 200:
-        break
-sd.pause()
+# count_snow_flakes = 0
+# resolution_screen = sd.resolution = (1200, 600)
+# Snowflake.create_list_snow_flakes(quantity=20)
+# # print("Усиление снегопада - S")
+# # print("Уменьшение снегопада - W")
+# # print("Ветер справа - A")
+# # print("Ветер слева - D")
+# # print("Клавиши нажимать дробно. Усиление +5 снежинок, уменьшение -1")
+# while True:
+#     sd.start_drawing()
+#     snow.draw_snow_flakes(color=sd.background_color)
+#     snow.shift_coord_snow_flakes()
+#     snow.draw_snow_flakes(color=sd.COLOR_WHITE)
+#     lst_bottom = snow.list_flown_bottom()
+#     quantity_deleted = len(lst_bottom)
+#     if quantity_deleted > 0:
+#         for i in range(quantity_deleted):
+#             snow.del_snow_flake(number_snow_flake=lst_bottom[i])
+#             snow.create_snowflakes_pos(quantity=1, position_add=lst_bottom[i], resolution=resolution_screen)
+#     sd.finish_drawing()
+#     # В таком вариант у меня устойчиво ловит команды клавиатуры, правда иногда дублирует их
+#     # а в предыдущем варианте почти не работало
+#     keyState = pygame.key.get_pressed()
+#     if keyState[pygame.K_s]:
+#         count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
+#     if keyState[pygame.K_w]:
+#         snow.thin_snow()
+#     if keyState[pygame.K_a]:
+#         snow.wind(direction=-1)
+#     if keyState[pygame.K_d]:
+#         snow.wind(direction=1)
+#     sd.sleep(0.1)
+#     if sd.user_want_exit() or count_snow_flakes > 200:
+#         break
+# sd.pause()
 
