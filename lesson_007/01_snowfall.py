@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-
-
 import simple_draw as sd
 import random as rd
-
+import pygame
 # Шаг 1: Реализовать падение снежинки через класс. Внести в методы:
 #  - создание снежинки с нужными параметрами
 #  - отработку изменений координат
@@ -19,9 +17,9 @@ class Snowflake:
     def __init__(self, resolution=(1200, 600), len_beam_min_max=(15, 20)):
         self.center_and_beams_snowflake = []
 
-        self.lst_factor = [[0.4, 0.5, 0.6, 0.7, 0.8],
-                           [0.25, 0.3, 0.35, 0.4, 0.45],
-                           [50, 55, 60, 65, 70],
+        self.lst_factor = [[0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8],
+                           [0.25, 0.275, 0.3, 0.325, 0.35, 0, 375, 0.4, 0.425, 0.45],
+                           [50, 52, 55, 57, 60, 62, 65, 67, 70],
                            ]
         # default value: factor_a=0.6, factor_b=0.35, factor_c=60
         coord_x = (-100, resolution[0] + 100)
@@ -74,6 +72,7 @@ class Snowflake:
 
     @classmethod
     def list_flown_bottom(cls):
+        Snowflake.wind_direction = 0
         Snowflake.number_snowflake_bottom = []
         for fl in range(Snowflake.quantity_snow_flakes):
             if Snowflake.list_snow_flakes[fl][1] < 0 - 35:
@@ -91,8 +90,16 @@ class Snowflake:
     @classmethod
     def draw_all_snow_flakes(cls, color=sd.COLOR_WHITE):
         for fl in range(Snowflake.quantity_snow_flakes):
-            Snowflake.draw_snow_flake(color=color)
+            Snowflake.draw_snow_flake(Snowflake.list_snow_flakes[fl], color=color)
 
+    @classmethod
+    def shift_all_snow_flakes(cls):
+        for fl in range(Snowflake.quantity_snow_flakes):
+            Snowflake.shift_coord_snow_flake(Snowflake.list_snow_flakes[fl])
+
+    @classmethod
+    def install_wind(cls, direct=0):
+        Snowflake.wind_direction = direct
 
     # def del_snow_flake(self, number_snow_flake=0):
     #     center_and_beams_snowflake.pop(number_snow_flake)
@@ -128,21 +135,23 @@ class Snowflake:
     #     elif direction < 0:
     #         print("Ветер справа")
 
-flake = Snowflake()
+# resolution_screen = sd.resolution = (1200, 600)
+# flake = Snowflake()
+#
+# while True:
+#     sd.start_drawing()
+#     flake.draw_snow_flake(color=sd.background_color)
+#     flake.shift_coord_snow_flake()
+#     flake.draw_snow_flake(color=sd.COLOR_WHITE)
+#     if flake.center_and_beams_snowflake[1] < 0 - 35:
+#         del flake
+#         flake = Snowflake()
+#     sd.finish_drawing()
+#     sd.sleep(0.1)
+#     if sd.user_want_exit():
+#         break
+# TODO одиночная работает по модели объект класса с вызовом методов объекта
 
-while True:
-    sd.start_drawing()
-    flake.draw_snow_flake(color=sd.background_color)
-    flake.shift_coord_snow_flake()
-    flake.draw_snow_flake(color=sd.COLOR_WHITE)
-    if flake.center_and_beams_snowflake[1] < 0 - 35:
-        del flake
-        flake = Snowflake()
-
-    sd.finish_drawing()
-    sd.sleep(0.1)
-    if sd.user_want_exit():
-        break
 
 # шаг 2: создать снегопад - список объектов Снежинка в отдельном списке, обработку примерно так:
 # flakes = get_flakes(count=N)  # создать список снежинок
@@ -158,39 +167,33 @@ while True:
 #     if sd.user_want_exit():
 #         break
 
-# count_snow_flakes = 0
-# resolution_screen = sd.resolution = (1200, 600)
-# Snowflake.create_list_snow_flakes(quantity=20)
-# # print("Усиление снегопада - S")
-# # print("Уменьшение снегопада - W")
-# # print("Ветер справа - A")
-# # print("Ветер слева - D")
-# # print("Клавиши нажимать дробно. Усиление +5 снежинок, уменьшение -1")
-# while True:
-#     sd.start_drawing()
-#     snow.draw_snow_flakes(color=sd.background_color)
-#     snow.shift_coord_snow_flakes()
-#     snow.draw_snow_flakes(color=sd.COLOR_WHITE)
-#     lst_bottom = snow.list_flown_bottom()
-#     quantity_deleted = len(lst_bottom)
-#     if quantity_deleted > 0:
-#         for i in range(quantity_deleted):
-#             snow.del_snow_flake(number_snow_flake=lst_bottom[i])
-#             snow.create_snowflakes_pos(quantity=1, position_add=lst_bottom[i], resolution=resolution_screen)
-#     sd.finish_drawing()
-#     # В таком вариант у меня устойчиво ловит команды клавиатуры, правда иногда дублирует их
-#     # а в предыдущем варианте почти не работало
-#     keyState = pygame.key.get_pressed()
-#     if keyState[pygame.K_s]:
-#         count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
-#     if keyState[pygame.K_w]:
-#         snow.thin_snow()
-#     if keyState[pygame.K_a]:
-#         snow.wind(direction=-1)
-#     if keyState[pygame.K_d]:
-#         snow.wind(direction=1)
-#     sd.sleep(0.1)
-#     if sd.user_want_exit() or count_snow_flakes > 200:
-#         break
-# sd.pause()
+count_snow_flakes = 0
+resolution_screen = sd.resolution = (1200, 600)
+Snowflake.create_list_snow_flakes(quantity=20)
+# print("Усиление снегопада - S")
+# print("Уменьшение снегопада - W")
+# print("Ветер справа - A")
+# print("Ветер слева - D")
+# print("Клавиши нажимать дробно. Усиление +5 снежинок, уменьшение -1")
+while True:
+    sd.start_drawing()
+    Snowflake.draw_all_snow_flakes(color=sd.background_color)
+    Snowflake.shift_all_snow_flakes()
+    Snowflake.draw_all_snow_flakes(color=sd.COLOR_WHITE)
+    Snowflake.list_flown_bottom()
+    Snowflake.delete_flown_bottom()
+    sd.finish_drawing()
+    keyState = pygame.key.get_pressed()
+    if keyState[pygame.K_s]:
+        count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
+    if keyState[pygame.K_w]:
+        snow.thin_snow()
+    if keyState[pygame.K_a]:
+        snow.wind(direction=-1)
+    if keyState[pygame.K_d]:
+        snow.wind(direction=1)
+    sd.sleep(0.1)
+    if sd.user_want_exit() or count_snow_flakes > 200:
+        break
+sd.pause()
 
