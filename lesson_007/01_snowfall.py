@@ -18,7 +18,7 @@ class Snowflake:
         self.center_and_beams_snowflake = []
 
         self.lst_factor = [[0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8],
-                           [0.25, 0.275, 0.3, 0.325, 0.35, 0, 375, 0.4, 0.425, 0.45],
+                           [0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45],
                            [50, 52, 55, 57, 60, 62, 65, 67, 70],
                            ]
         # default value: factor_a=0.6, factor_b=0.35, factor_c=60
@@ -62,7 +62,6 @@ class Snowflake:
 
     @classmethod
     def create_list_snow_flakes(cls, quantity=0):
-        Snowflake.quantity_snow_flakes = quantity
         for fl in range(quantity):
             Snowflake.list_snow_flakes.append(cls())
 
@@ -75,7 +74,7 @@ class Snowflake:
         Snowflake.wind_direction = 0
         Snowflake.number_snowflake_bottom = []
         for fl in range(Snowflake.quantity_snow_flakes):
-            if Snowflake.list_snow_flakes[fl][1] < 0 - 35:
+            if Snowflake.list_snow_flakes[fl].center_and_beams_snowflake[1] < 0 - 35:
                 Snowflake.number_snowflake_bottom.append(fl)
         return Snowflake.number_snowflake_bottom
 
@@ -85,10 +84,12 @@ class Snowflake:
         if quantity_delete > 0:
             for fl in range(quantity_delete):
                 del Snowflake.list_snow_flakes[Snowflake.number_snowflake_bottom[fl]]
+                Snowflake.quantity_snow_flakes -= 1
                 Snowflake.list_snow_flakes.insert(Snowflake.number_snowflake_bottom[fl], cls())
 
     @classmethod
     def draw_all_snow_flakes(cls, color=sd.COLOR_WHITE):
+        print(Snowflake.quantity_snow_flakes)
         for fl in range(Snowflake.quantity_snow_flakes):
             Snowflake.draw_snow_flake(Snowflake.list_snow_flakes[fl], color=color)
 
@@ -100,11 +101,6 @@ class Snowflake:
     @classmethod
     def install_wind(cls, direct=0):
         Snowflake.wind_direction = direct
-
-    # def del_snow_flake(self, number_snow_flake=0):
-    #     center_and_beams_snowflake.pop(number_snow_flake)
-    #     quantity_snow_flakes -= 1
-
 
     # def thin_snow():
     #     number_snowflake_upper = []
@@ -118,22 +114,6 @@ class Snowflake:
     #     print("Осталось снежинок", quantity_snow_flakes)
     #
     #
-    # def list_flown_bottom():
-    #     number_snowflake_bottom = []
-    #     wind_direction = 0
-    #     for i in range(quantity_snow_flakes):
-    #         if center_and_beams_snowflakes[i][1] < 0 - 35:
-    #             number_snowflake_bottom.append(i)
-    #     return number_snowflake_bottom
-    #
-    #
-    # def wind(direction=0):
-    #     wind_direction = direction
-    #     # Так проще использовать функцию
-    #     if direction > 0:
-    #         print("Ветер слева")
-    #     elif direction < 0:
-    #         print("Ветер справа")
 
 # resolution_screen = sd.resolution = (1200, 600)
 # flake = Snowflake()
@@ -183,15 +163,15 @@ while True:
     Snowflake.list_flown_bottom()
     Snowflake.delete_flown_bottom()
     sd.finish_drawing()
-    keyState = pygame.key.get_pressed()
-    if keyState[pygame.K_s]:
-        count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
-    if keyState[pygame.K_w]:
-        snow.thin_snow()
-    if keyState[pygame.K_a]:
-        snow.wind(direction=-1)
-    if keyState[pygame.K_d]:
-        snow.wind(direction=1)
+    # keyState = pygame.key.get_pressed()
+    # if keyState[pygame.K_s]:
+    #     count_snow_flakes = snow.create_snowflakes(quantity=5, resolution=resolution_screen)
+    # if keyState[pygame.K_w]:
+    #     snow.thin_snow()
+    # if keyState[pygame.K_a]:
+    #     snow.wind(direction=-1)
+    # if keyState[pygame.K_d]:
+    #     snow.wind(direction=1)
     sd.sleep(0.1)
     if sd.user_want_exit() or count_snow_flakes > 200:
         break
