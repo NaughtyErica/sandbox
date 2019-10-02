@@ -14,6 +14,7 @@ class Snowflake:
     quantity_snow_flakes = 0
     wind_direction = 0
     list_snow_flakes = []
+    number_snowflake_bottom = []
 
     def __init__(self, resolution=(1200, 600), len_beam_min_max=(15, 20)):
         self.center_and_beams_snowflake = []
@@ -66,8 +67,17 @@ class Snowflake:
         for i in range(quantity):
             Snowflake.list_snow_flakes.append(cls())
 
+    @classmethod
+    def insert_to_list_snow_flakes(cls, position=0):
+        Snowflake.list_snow_flakes.insert(position, cls())
 
-
+    @classmethod
+    def list_flown_bottom(cls):
+        Snowflake.number_snowflake_bottom = []
+        for i in range(Snowflake.quantity_snow_flakes):
+            if Snowflake.list_snow_flakes[i][1] < 0 - 35:
+                Snowflake.number_snowflake_bottom.append(i)
+        return Snowflake.number_snowflake_bottom
 
 
 
