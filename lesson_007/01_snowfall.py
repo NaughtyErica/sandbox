@@ -21,7 +21,6 @@ class Snowflake:
                            [0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45],
                            [50, 52, 55, 57, 60, 62, 65, 67, 70],
                            ]
-        # default value: factor_a=0.6, factor_b=0.35, factor_c=60
         coord_x = (-100, resolution[0] + 100)
         coord_y = (resolution[1] + 70, resolution[1] * 2)
         x = sd.random_number(coord_x[0], coord_x[1])
@@ -105,7 +104,7 @@ class Snowflake:
                 number_snowflake_upper.append(fl)
         count_upper = len(number_snowflake_upper)
         if count_upper > 0:
-            del Snowflake.list_snow_flakes[Snowflake.number_snowflake_bottom[0]]
+            del Snowflake.list_snow_flakes[number_snowflake_upper[0]]
             Snowflake.quantity_snow_flakes -= 1
 
 
@@ -141,6 +140,10 @@ class Snowflake:
 #     if sd.user_want_exit():
 #         break
 
+
+# TODO Мой снегопад работает исключительно методами класса,
+# TODO без предлагаемой модели организации списка объектов и его перебора
+# TODO в основной программе
 count_snow_flakes = 0
 resolution_screen = sd.resolution = (1200, 600)
 Snowflake.create_list_snow_flakes(quantity=20)
@@ -170,4 +173,3 @@ while True:
     if sd.user_want_exit() or count_snow_flakes > 200:
         break
 sd.pause()
-
