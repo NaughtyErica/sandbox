@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-import simple_draw as sd
-import random as rd
-import pygame
-# -*- coding: utf-8 -*-
 import simple_draw as sd
 import random as rd
 import pygame
@@ -12,57 +7,41 @@ import pygame
 # class Snowflake:
 #
 #     def __init__(self, resolution=(1200, 600), len_beam_min_max=(15, 20)):
-#         self.center_and_beams_snowflake = []
-#
-#         self.lst_factor = [[0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8],
-#                            [0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45],
-#                            [50, 52, 55, 57, 60, 62, 65, 67, 70],
-#                            ]
+#         lst_factor = [[0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8],
+#                       [0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45],
+#                       [50, 52, 55, 57, 60, 62, 65, 67, 70],
+#                       ]
 #         coord_x = (-100, resolution[0] + 100)
 #         coord_y = (resolution[1] + 70, resolution[1] * 2)
-#         x = sd.random_number(coord_x[0], coord_x[1])
-#         y = sd.random_number(coord_y[0], coord_y[1])
-#         len_beam = sd.random_number(len_beam_min_max[0], len_beam_min_max[1])
-#         factor_a = rd.choice(self.lst_factor[0])
-#         factor_b = rd.choice(self.lst_factor[1])
-#         factor_c = rd.choice(self.lst_factor[2])
-#         self.center_and_beams_snowflake.append(x)
-#         self.center_and_beams_snowflake.append(y)
-#         self.center_and_beams_snowflake.append(len_beam)
-#         self.center_and_beams_snowflake.append(factor_a)
-#         self.center_and_beams_snowflake.append(factor_b)
-#         self.center_and_beams_snowflake.append(factor_c)
-#         # Snowflake.quantity_snow_flakes += 1
+#         self.x = sd.random_number(coord_x[0], coord_x[1])
+#         self.y = sd.random_number(coord_y[0], coord_y[1])
+#         self.len_beam = sd.random_number(len_beam_min_max[0], len_beam_min_max[1])
+#         self.factor_a = rd.choice(lst_factor[0])
+#         self.factor_b = rd.choice(lst_factor[1])
+#         self.factor_c = rd.choice(lst_factor[2])
 #
 #     def draw(self, color=sd.COLOR_WHITE):
-#         """
-#             factor_a=0.6, factor_b=0.35, factor_c=60
-#             factor_a - место ответвления лучиков
-#             factor_b - длина лучиков
-#             factor_c - угол отклонения лучиков
-#         """
-#         if (-70 < self.center_and_beams_snowflake[0] < 1270) and self.center_and_beams_snowflake[1] < 700:
-#             point = sd.get_point(self.center_and_beams_snowflake[0], self.center_and_beams_snowflake[1])
-#             sd.snowflake(center=point, length=self.center_and_beams_snowflake[2], color=color,
-#                          factor_a=self.center_and_beams_snowflake[3],
-#                          factor_b=self.center_and_beams_snowflake[4],
-#                          factor_c=self.center_and_beams_snowflake[5])
+#         if (-70 < self.x < 1270) and self.y < 700:
+#             point = sd.get_point(self.x, self.y)
+#             sd.snowflake(center=point, length=self.len_beam, color=color,
+#                          factor_a=self.factor_a,
+#                          factor_b=self.factor_b,
+#                          factor_c=self.factor_c)
 #
 #     def shift_coord(self):
-#         self.center_and_beams_snowflake[0] += sd.random_number(-10, 10)
-#         self.center_and_beams_snowflake[1] -= sd.random_number(10, 20)
-
+#         self.x += sd.random_number(-10, 10)
+#         self.y -= sd.random_number(10, 20)
+#
 
 # Вариант одиночной падающей снежинки
 # resolution_screen = sd.resolution = (1200, 600)
 # flake = Snowflake()
 # while True:
-#     print(flake)
 #     sd.start_drawing()
 #     flake.draw(color=sd.background_color)
 #     flake.shift_coord()
 #     flake.draw(color=sd.COLOR_WHITE)
-#     if flake.center_and_beams_snowflake[1] < 0 - 35:
+#     if flake.y < 0 - 35:
 #         del flake
 #         flake = Snowflake()
 #     sd.finish_drawing()
@@ -87,7 +66,7 @@ import pygame
 #         flake.draw(color=sd.COLOR_WHITE)
 #     lst_number_fallen_flakes = []
 #     for fl in range(len(lst_flakes)):
-#         if lst_flakes[fl].center_and_beams_snowflake[1] < 0 - 35:
+#         if lst_flakes[fl].y < 0 - 35:
 #             lst_number_fallen_flakes.append(fl)
 #     quantity_delete = len(lst_number_fallen_flakes)
 #     if quantity_delete > 0:
@@ -113,7 +92,7 @@ import pygame
 # def get_number_fallen_flakes(lst_snow_flakes=[]):
 #     list_number_fallen_flakes = []
 #     for fl in range(len(lst_snow_flakes)):
-#         if lst_snow_flakes[fl].center_and_beams_snowflake[1] < 0 - 35:
+#         if lst_snow_flakes[fl].y < 0 - 35:
 #             list_number_fallen_flakes.append(fl)
 #     return list_number_fallen_flakes
 #
@@ -128,7 +107,7 @@ import pygame
 #
 #
 # resolution_screen = sd.resolution = (1200, 600)
-# lst_flakes = get_flakes(count=20)  # создать список снежинок
+# lst_flakes = get_flakes(count=20)
 # while True:
 #     for flake in lst_flakes:
 #         sd.start_drawing()
@@ -162,7 +141,7 @@ import pygame
 #     global list_number_fallen_flakes
 #     list_number_fallen_flakes = []
 #     for fl in range(quantity_snow_flakes):
-#         if list_snow_flakes[fl].center_and_beams_snowflake[1] < 0 - 35:
+#         if list_snow_flakes[fl].y < 0 - 35:
 #             list_number_fallen_flakes.append(fl)
 #     return list_number_fallen_flakes
 #
@@ -177,7 +156,6 @@ import pygame
 #             list_snow_flakes.insert(list_number_fallen_flakes[fl], flake)
 #
 #
-
 # lst_flakes = get_flakes(count=quantity_snow_flakes)
 # while True:
 #     for flake in lst_flakes:
@@ -197,26 +175,18 @@ import pygame
 class Snowflake:
 
     def __init__(self, resolution=(1200, 600), len_beam_min_max=(15, 20)):
-        self.center_and_beams_snowflake = []
-
-        self.lst_factor = [[0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8],
-                           [0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45],
-                           [50, 52, 55, 57, 60, 62, 65, 67, 70],
-                           ]
+        lst_factor = [[0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8],
+                      [0.25, 0.275, 0.3, 0.325, 0.35, 0.375, 0.4, 0.425, 0.45],
+                      [50, 52, 55, 57, 60, 62, 65, 67, 70],
+                     ]
         coord_x = (-100, resolution[0] + 100)
         coord_y = (resolution[1] + 70, resolution[1] * 2)
-        x = sd.random_number(coord_x[0], coord_x[1])
-        y = sd.random_number(coord_y[0], coord_y[1])
-        len_beam = sd.random_number(len_beam_min_max[0], len_beam_min_max[1])
-        factor_a = rd.choice(self.lst_factor[0])
-        factor_b = rd.choice(self.lst_factor[1])
-        factor_c = rd.choice(self.lst_factor[2])
-        self.center_and_beams_snowflake.append(x)
-        self.center_and_beams_snowflake.append(y)
-        self.center_and_beams_snowflake.append(len_beam)
-        self.center_and_beams_snowflake.append(factor_a)
-        self.center_and_beams_snowflake.append(factor_b)
-        self.center_and_beams_snowflake.append(factor_c)
+        self.x = sd.random_number(coord_x[0], coord_x[1])
+        self.y = sd.random_number(coord_y[0], coord_y[1])
+        self.len_beam = sd.random_number(len_beam_min_max[0], len_beam_min_max[1])
+        self.factor_a = rd.choice(lst_factor[0])
+        self.factor_b = rd.choice(lst_factor[1])
+        self.factor_c = rd.choice(lst_factor[2])
 
     def draw_snow_flake(self, color=sd.COLOR_WHITE):
         """
@@ -225,19 +195,19 @@ class Snowflake:
             factor_b - длина лучиков
             factor_c - угол отклонения лучиков
         """
-        if (-70 < self.center_and_beams_snowflake[0] < 1270) and self.center_and_beams_snowflake[1] < 700:
-            point = sd.get_point(self.center_and_beams_snowflake[0], self.center_and_beams_snowflake[1])
-            sd.snowflake(center=point, length=self.center_and_beams_snowflake[2], color=color,
-                         factor_a=self.center_and_beams_snowflake[3],
-                         factor_b=self.center_and_beams_snowflake[4],
-                         factor_c=self.center_and_beams_snowflake[5])
+        if (-70 < self.x < 1270) and self.y < 700:
+            point = sd.get_point(self.x, self.y)
+            sd.snowflake(center=point, length=self.len_beam, color=color,
+                         factor_a=self.factor_a,
+                         factor_b=self.factor_b,
+                         factor_c=self.factor_c)
 
     def shift_coord_snow_flake(self, wind_direction=0):
-        self.center_and_beams_snowflake[0] += sd.random_number(-10, 10) + wind_direction * 20
-        self.center_and_beams_snowflake[1] -= sd.random_number(10, 20)
+        self.x += sd.random_number(-10, 10) + wind_direction * 20
+        self.y -= sd.random_number(10, 20)
 
 
-# Класс снегопада с примененеим класса снежинки
+# Класс снегопада с использованием класса снежинки
 class SnowFall:
 
     def __init__(self, quantity_snow_flakes=0):
@@ -250,15 +220,15 @@ class SnowFall:
             self.list_snow_flakes.append(flake)
 
     def insert_to_list_snow_flakes(self, count=0):
-        flake = Snowflake()
         for fl in range(count):
+            flake = Snowflake()
             self.quantity_flakes += 1
             self.list_snow_flakes.append(flake)
 
     def get_fallen_flakes(self):
         self.number_fallen_flakes = []
         for fl in range(self.quantity_flakes):
-            if self.list_snow_flakes[fl].center_and_beams_snowflake[1] < 0 - 35:
+            if self.list_snow_flakes[fl].y < 0 - 35:
                 self.number_fallen_flakes.append(fl)
 
     def delete_fallen_create_new(self):
@@ -284,7 +254,7 @@ class SnowFall:
     def thin_snow(self):
         number_snowflake_upper = []
         for fl in range(self.quantity_flakes):
-            if self.list_snow_flakes[fl].center_and_beams_snowflake[1] > 800:
+            if self.list_snow_flakes[fl].y > 800:
                 number_snowflake_upper.append(fl)
         count_upper = len(number_snowflake_upper)
         if count_upper > 0:
@@ -296,7 +266,7 @@ class SnowFall:
 
 
 resolution_screen = sd.resolution = (1200, 600)
-SnowF = SnowFall(quantity_snow_flakes=20)
+snow_fall = SnowFall(quantity_snow_flakes=40)
 print("Усиление снегопада - S\n"
       "Уменьшение снегопада - W\n"
       "Ветер справа - A\n"
@@ -304,24 +274,25 @@ print("Усиление снегопада - S\n"
       "Клавиши нажимать дробно. Усиление +5 снежинок, уменьшение -1")
 while True:
     sd.start_drawing()
-    SnowF.draw_all_snow_flakes(color=sd.background_color)
-    SnowF.shift_all_snow_flakes()
-    SnowF.draw_all_snow_flakes(color=sd.COLOR_WHITE)
-    SnowF.get_fallen_flakes()
-    SnowF.delete_fallen_create_new()
+    snow_fall.draw_all_snow_flakes(color=sd.background_color)
+    snow_fall.shift_all_snow_flakes()
+    snow_fall.draw_all_snow_flakes(color=sd.COLOR_WHITE)
+    snow_fall.get_fallen_flakes()
+    snow_fall.delete_fallen_create_new()
     sd.finish_drawing()
     keyState = pygame.key.get_pressed()
     if keyState[pygame.K_s]:
-        SnowF.insert_to_list_snow_flakes(count=5)
+        snow_fall.insert_to_list_snow_flakes(count=5)
     if keyState[pygame.K_w]:
-        SnowF.thin_snow()
+        snow_fall.thin_snow()
     if keyState[pygame.K_a]:
-        SnowF.install_wind(direction=-1)
+        snow_fall.install_wind(direction=-1)
     if keyState[pygame.K_d]:
-        SnowF.install_wind(direction=1)
+        snow_fall.install_wind(direction=1)
     sd.sleep(0.1)
-    if sd.user_want_exit() or SnowF.get_quantity_flakes() > 200:
+    if sd.user_want_exit() or snow_fall.get_quantity_flakes() > 200:
         break
+sd.pause()
 sd.pause()
 
 # Снегопад через методы класса снежинка
