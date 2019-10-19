@@ -150,7 +150,7 @@ class CanFly:
         self.velocity = 0
 
     def operate(self):
-        super().operate()
+        # super().operate()
         print('летим')
 
     def __str__(self):
