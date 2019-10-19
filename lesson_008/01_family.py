@@ -100,7 +100,7 @@ class Husband(Human):
             cprint('{} поел'.format(self.name), color='blue')
             self.fullness += 30
             self.house.food -= 30
-            self.happiness += 30
+            self.happiness += 5
         else:
             cprint('{} хотел поесть, но у него нет еды'.format(self.name), color='blue')
             self.fullness -= 10
@@ -111,7 +111,7 @@ class Husband(Human):
         self.house.money += self.salary
         self.total_salary += self.salary
         self.fullness -= 10
-        self.happiness -= 5
+        self.happiness += 5
 
     def gaming(self):
         cprint('{} играл в WoT целый день'.format(self.name), color='blue')
@@ -121,7 +121,7 @@ class Husband(Human):
 
     def quarrel(self):
         self.fullness -= 10
-        self.happiness -= 25
+        self.happiness -= 30
         cprint('{} скандалил с женой!'.format(self.name), color='blue')
 
     def act(self):
@@ -175,6 +175,7 @@ class Wife(Human):
         else:
             cprint('{} хотела поесть, но у нее нет еды'.format(self.name), color='cyan')
             self.fullness -= 10
+            self.happiness -= 5
             self.shopping()
 
     def shopping(self):
@@ -204,12 +205,12 @@ class Wife(Human):
             cprint('{} хотела купить шубу, но не хватило денег на {} шубу!'.format(
                 self.name, self.quantity_fur + 1), color='cyan')
             self.fullness -= 10
-            self.happiness -= 5
+            self.happiness -= 20
 
     def clearn_house(self):
         self.house.debris -= 100
         self.fullness -= 10
-        self.happiness -= 5
+        self.happiness -= 15
         cprint('{} убиралась в доме'.format(self.name), color='cyan')
 
     def quarrel(self):
@@ -234,7 +235,7 @@ class Wife(Human):
                 self.shopping()
             elif self.house.debris >= 100:
                 self.clearn_house()
-            elif dice == 1 and self.house.money < 400:
+            elif dice == 1 and self.house.money < 400 and self.husband.living:
                 self.quarrel()
                 self.quarrel_with_husband = False
             else:
@@ -267,7 +268,6 @@ cprint(serge, color='yellow')
 cprint('{} закатила за {} дней {} скандалов'.format(masha.name, day, masha.quantity_quarrel), color='red')
 cprint('{} заработал за {} дней {} баксов'.format(serge.name, day, serge.total_salary), color='red')
 cprint('И ими было съедено {} еды'.format(home.total_food), color='red')
-# TODO после реализации первой части - отдать на проверку учителю
 
 ######################################################## Часть вторая
 #
