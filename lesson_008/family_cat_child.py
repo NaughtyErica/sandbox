@@ -149,7 +149,7 @@ class Child(Human):
         cprint('Маленького ребенка {} принесли из роддома'.format(self.name), color='green')
 
     def eat(self):
-        if self.house.food >= 30:
+        if self.house.get_food() >= 30:
             cprint('{} поел'.format(self.name), color='green')
             self.fullness += 10
             self.house.decrease_food(quantity=10)
