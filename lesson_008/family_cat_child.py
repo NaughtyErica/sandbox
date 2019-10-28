@@ -305,8 +305,8 @@ class Wife(Human):
                 self.house.add_food(quantity=100)
             else:
                 cprint('{} сходила в магазин за едой для домашних питомцев'.format(self.name), color='cyan')
-                self.house.decrease_money(quantity=40)
-                self.house.add_animal_food(quantity=40)
+                self.house.decrease_money(quantity=60)
+                self.house.add_animal_food(quantity=60)
             self.fullness -= 10
             self.happiness -= 5
         else:
@@ -354,7 +354,7 @@ class Wife(Human):
                 return
             if self.fullness <= 10:
                 self.eat()
-            elif self.house.get_food() <= 50 or self.house.get_animal_food() <= 20:
+            elif self.house.get_food() <= 50 or self.house.get_animal_food() <= 30:
                 self.shopping()
             elif self.house.get_debris() >= 100:
                 self.clearn_house()
