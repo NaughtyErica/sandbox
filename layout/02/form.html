@@ -10,43 +10,43 @@
     <form method="post">
       <h2>Основные данные</h2>
       <h3>* Фамилия, имя, отчество:</h3>
-      <input required type="text" name="first_last_name" size="50">
+      <input required type="text" name="first_last_name" size="45">
       <h3>Дата рождения:</h3>
       <input type="date" name="date"><br>
-      <h3>Пол:</h3><br>
-      <input id="male" type="radio" name="choice">&nbsp;&nbsp;
+      <h3>Пол:</h3>
+      <input id="male" type="radio" name="choice_sex" value="mail">
         <label for="male">Мужской</label>
-      <input id="female" type="radio" name="choice">&nbsp;&nbsp;
+      <input id="female" type="radio" name="choice_sex" value="female">
         <label for="female">Женский</label>
       <h2>Данные для создания личного кабинета</h2>
       <h3>* Адрес электронной почты:</h3>
-      <input required type="email" name="e_mail" size="50">
+      <input required type="email" name="e_mail" size="45">
       <h3>* Пароль для создания личного кабинета:</h3>
-      <input required type="password" name="pass_wd" size="50">
+      <input required type="password" name="pass_wd" size="45">
       <h3>* Подтвержение пароля:</h3>
-      <input required type="password" name="retype_pass_wd" size="50">
+      <input required type="password" name="retype_pass_wd" size="45">
       <h2>Материалы для конференции</h2>
       <h3>* Тема доклада:</h3>
-      <input required type="text" name="text_speak" size="50">
+      <input required type="text" name="text_speak" size="45">
       <h3>* Тезисы доклада (не более 1000 символов):</h3>
-      <textarea cols="50" rows="10"> </textarea>
+      <textarea cols="45" rows="10"> </textarea>
       <h3>Файл презентации:</h3>
       <input type="file" name="file_name">
       <br>
       <h2>Допольнительные опции</h2>
       <br>
-      <input id="living" type="checkbox" name="living"> &nbsp;
-        <label for="living">Проживание в отеле</label><br>
-      <input id="breakfast" checked type="checkbox" name="breakfast"> &nbsp;
+      <input id="living_hotel" type="checkbox" name="living_hotel" value="select">
+        <label for="living_hotel">Проживание в отеле</label><br>
+      <input id="breakfast" checked type="checkbox" name="breakfast" value="select">
         <label for="breakfast">Завтрак</label><br>
-      <input id="dinner" type="checkbox" name="dinner"> &nbsp;
+      <input id="dinner" type="checkbox" name="dinner" value="select">
         <label for="dinner">Обед</label><br>
-      <input id="evening" type="checkbox" name="evening"> &nbsp;
+      <input id="evening" type="checkbox" name="evening" value="select">
         <label for="evening">Ужин</label><br>
       <hr>
       <input type="submit" value="Отправить">
       <hr>
-      * Поля, отмеченные звездочкой, являются обязательными для заполнения
+      <small>* Поля, отмеченные звездочкой, являются обязательными для заполнения</small>
   </form>
 </main>
 <footer></footer>

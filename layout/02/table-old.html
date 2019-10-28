@@ -3,23 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Table</title>
-    <style>
-      table, tr, th, td{
-                        border: 2px solid black;
-                        border-collapse: collapse;
-                       }
-      tr, th, td {
-                  padding: 6px 8px 6px 8px;
-                 }
-      #total{
-             text-align: left;
-            }
-    </style>
 </head>
 <body>
   <main>
     <h2>Статистика компании за неделю</h2>
-    <table>
+    <table border="2" cellspacing="0" cellpadding="6" width="425">
       <tr>
         <th rowspan="2">Дата</th>
         <th colspan="2">Доход</th>
@@ -81,7 +69,7 @@
         <td>541 980</td>
       </tr>
       <tr>
-        <th id="total">Итого:</th>
+        <th align="left">Итого:</th>
         <th>2 543 148</th>
         <th>4 107 030</th>
         <th>3 956 415</th>
