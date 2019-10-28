@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Форма заявки</title>
+</head>
+<body>
+<main>
+  <h1>Отправка заявки на конференцию</h1>
+    <form method="post">
+      <h2>Основные данные</h2>
+      <h3>* Фамилия, имя, отчество:</h3>
+      <input required type="text" name="first_last_name" size="50">
+      <h3>Дата рождения:</h3>
+      <input type="date" name="date"><br>
+      <h3>Пол:</h3><br>
+      <input id="male" type="radio" name="choice">&nbsp;&nbsp;
+        <label for="male">Мужской</label>
+      <input id="female" type="radio" name="choice">&nbsp;&nbsp;
+        <label for="female">Женский</label>
+      <h2>Данные для создания личного кабинета</h2>
+      <h3>* Адрес электронной почты:</h3>
+      <input required type="email" name="e_mail" size="50">
+      <h3>* Пароль для создания личного кабинета:</h3>
+      <input required type="password" name="pass_wd" size="50">
+      <h3>* Подтвержение пароля:</h3>
+      <input required type="password" name="retype_pass_wd" size="50">
+      <h2>Материалы для конференции</h2>
+      <h3>* Тема доклада:</h3>
+      <input required type="text" name="text_speak" size="50">
+      <h3>* Тезисы доклада (не более 1000 символов):</h3>
+      <textarea cols="50" rows="10"> </textarea>
+      <h3>Файл презентации:</h3>
+      <input type="file" name="file_name">
+      <br>
+      <h2>Допольнительные опции</h2>
+      <br>
+      <input id="living" type="checkbox" name="living"> &nbsp;
+        <label for="living">Проживание в отеле</label><br>
+      <input id="breakfast" checked type="checkbox" name="breakfast"> &nbsp;
+        <label for="breakfast">Завтрак</label><br>
+      <input id="dinner" type="checkbox" name="dinner"> &nbsp;
+        <label for="dinner">Обед</label><br>
+      <input id="evening" type="checkbox" name="evening"> &nbsp;
+        <label for="evening">Ужин</label><br>
+      <hr>
+      <input type="submit" value="Отправить">
+      <hr>
+      * Поля, отмеченные звездочкой, являются обязательными для заполнения
+  </form>
+</main>
+<footer></footer>
+</body>
+</html>
