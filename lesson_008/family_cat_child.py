@@ -154,9 +154,9 @@ class Pet(LivingBeing):
 
     def __str__(self):
         if self.living:
-            str_print = 'Я домашний питомец - {}, сытость {}'.format(self.name, self.fullness)
+            str_print = ' сытость {}'.format(self.name, self.fullness)
         else:
-            str_print = 'Я домашний питомец - {}, моя смерть наступила на {} день'.format(
+            str_print = ' моя смерть наступила на {} день'.format(
                 self.name, self.count_living_days)
         return str_print
 
@@ -182,6 +182,10 @@ class Cat(Pet):
         self.quantity_stroking = 0
         self.name_owner = None
         self.appetite = 9
+
+    def __str__(self):
+        return 'Я кот {}, '.format(
+            self.name) + super().__str__()
 
     def annual_result(self):
         result_str = 'Я кот - {}, сытость {}, меня гладили {} раз'.format(
@@ -237,6 +241,10 @@ class Dog(Pet):
         super().__init__(name=name)
         self.quantity_walk = 0
         self.quantity_crew = 0
+
+    def __str__(self):
+        return 'Я собака {}, '.format(
+            self.name) + super().__str__()
 
     def annual_result(self):
         result_str = 'Я собака - {}, сытость {}, я гуляла {} раз и грызла мебель {} раз'.format(
