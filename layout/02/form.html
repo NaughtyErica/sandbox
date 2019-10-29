@@ -14,7 +14,7 @@
       <h3>Дата рождения:</h3>
       <input type="date" name="date"><br>
       <h3>Пол:</h3>
-      <input id="male" type="radio" name="choice_sex" value="mail">
+      <input id="male" type="radio" name="choice_sex" value="male">
         <label for="male">Мужской</label>
       <input id="female" type="radio" name="choice_sex" value="female">
         <label for="female">Женский</label>
@@ -35,14 +35,14 @@
       <br>
       <h2>Допольнительные опции</h2>
       <br>
-      <input id="living_hotel" type="checkbox" name="living_hotel" value="select">
-        <label for="living_hotel">Проживание в отеле</label><br>
-      <input id="breakfast" checked type="checkbox" name="breakfast" value="select">
-        <label for="breakfast">Завтрак</label><br>
-      <input id="dinner" type="checkbox" name="dinner" value="select">
-        <label for="dinner">Обед</label><br>
-      <input id="evening" type="checkbox" name="evening" value="select">
-        <label for="evening">Ужин</label><br>
+      <input id="check_living_hotel" type="checkbox" name="option[]" value="living_hotel">
+        <label for="check_living_hotel">Проживание в отеле</label><br>
+      <input id="check_breakfast" checked type="checkbox" name="option[]" value="breakfast">
+        <label for="check_breakfast">Завтрак</label><br>
+      <input id="check_dinner" type="checkbox" name="option[]" value="dinner">
+        <label for="check_dinner">Обед</label><br>
+      <input id="check_evening" type="checkbox" name="option[]" value="evening">
+        <label for="check_evening">Ужин</label><br>
       <hr>
       <input type="submit" value="Отправить">
       <hr>

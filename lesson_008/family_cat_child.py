@@ -109,15 +109,31 @@ class House:
     def get_quantity_cats(self):
         return self.quantity_cats
 
+    def get_quantity_living_cat(self):
+        result = 0
+        for i in range(self.quantity_cats):
+            result += self.list_cats[i].is_living()
+        return result
 
-class Human:
+
+class LivingBeing:
 
     def __init__(self):
-        self.fullness = 50
-        self.happiness = 0
-        self.house = None
         self.living = True
         self.count_living_days = 0
+
+    def is_living(self):
+        return self.living
+
+
+class Human(LivingBeing):
+
+    def __init__(self):
+        super().__init__()
+        self.fullness = 50
+        self.happiness = 0
+        self.appetite = 30
+        self.house = None
         self.stroking_cat = False
 
     def __str__(self):
@@ -128,9 +144,6 @@ class Human:
             str_print = 'моя смерть наступила на {} день'.format(self.count_living_days)
         return str_print
 
-    def is_living(self):
-        return self.living
-
 
 class Child(Human):
 
@@ -139,6 +152,7 @@ class Child(Human):
         self.fullness = 30
         self.happiness = 100
         self.name = name
+        self.appetite = 10
 
     def __str__(self):
         return 'Я маленький ребенок {}, '.format(
@@ -151,16 +165,16 @@ class Child(Human):
     def eat(self):
         if self.house.get_food() >= 30:
             cprint('{} поел'.format(self.name), color='green')
-            self.fullness += 10
-            self.house.decrease_food(quantity=10)
-            self.house.add_total_food_eating(quantity=10)
+            self.fullness += self.appetite
+            self.house.decrease_food(quantity=self.appetite)
+            self.house.add_total_food_eating(quantity=self.appetite)
         else:
             cprint('{} хотел поесть, но у него нет еды и он орал от голода целый день'.format(self.name), color='green')
-            self.fullness -= 10
+            self.fullness -= self.appetite
             self.happiness -= 50
 
     def sleep(self):
-        self.fullness -= 10
+        self.fullness -= self.appetite
         cprint('Маленький ребенок {} спал весь день'.format(self.name), color='green')
 
     def act(self):
@@ -209,9 +223,9 @@ class Husband(Human):
     def eat(self):
         if self.house.get_food() >= 30:
             cprint('{} поел'.format(self.name), color='blue')
-            self.fullness += 30
-            self.house.decrease_food(quantity=30)
-            self.house.add_total_food_eating(quantity=30)
+            self.fullness += self.appetite
+            self.house.decrease_food(quantity=self.appetite)
+            self.house.add_total_food_eating(quantity=self.appetite)
             self.happiness += 5
         else:
             cprint('{} хотел поесть, но у него нет еды'.format(self.name), color='blue')
@@ -238,8 +252,14 @@ class Husband(Human):
         number_cat = randint(1, self.house.get_quantity_cats()) - 1
         self.house.get_cat_by_number(number_cat=number_cat).set_stroking_cat(name_owner=self.name)
         cat_name = self.house.get_cat_by_number(number_cat=number_cat).get_cat_name()
-        cprint('{} скандалил с женой и для успокоения гладил кота {}!'.format(
-            self.name, cat_name), color='yellow')
+        cat_count_living_day = self.house.get_cat_by_number(number_cat=number_cat).get_count_living_days()
+        if self.house.get_cat_by_number(number_cat=number_cat).is_living():
+            cprint('{} скандалил с женой и для успокоения гладил кота {}!'.format(
+                self.name, cat_name), color='yellow')
+        else:
+            cprint('{} скандалил с женой и оплакивал умершего на {} день от голода кота {}!'.format(
+                self.name, cat_count_living_day, cat_name), color='yellow')
+            self.happiness -= 10
 
     def act(self):
         if self.living:
@@ -287,9 +307,9 @@ class Wife(Human):
     def eat(self):
         if self.house.get_food() >= 30:
             cprint('{} поела'.format(self.name), color='cyan')
-            self.fullness += 30
-            self.house.decrease_food(quantity=30)
-            self.house.add_total_food_eating(quantity=30)
+            self.fullness += self.appetite
+            self.house.decrease_food(quantity=self.appetite)
+            self.house.add_total_food_eating(quantity=self.appetite)
             self.happiness += 5
         else:
             cprint('{} хотела поесть, но у нее нет еды'.format(self.name), color='cyan')
@@ -304,16 +324,18 @@ class Wife(Human):
                 self.house.decrease_money(quantity=100)
                 self.house.add_food(quantity=100)
             else:
-                cprint('{} сходила в магазин за едой для домашних питомцев'.format(self.name), color='cyan')
-                self.house.decrease_money(quantity=60)
-                self.house.add_animal_food(quantity=60)
-            self.fullness -= 10
-            self.happiness -= 5
+                if self.house.get_quantity_living_cat() > 0:
+                    cprint('{} сходила в магазин за едой для домашних питомцев'.format(self.name), color='cyan')
+                    self.house.decrease_money(quantity=60)
+                    self.house.add_animal_food(quantity=60)
+                else:
+                    cprint('{} погрустила об умерших домашних питомцах'.format(self.name), color='cyan')
+
         else:
             cprint('{} хотела пойти за продуктами, но не хватает денег!'.format(
                 self.name), color='cyan')
-            self.fullness -= 10
-            self.happiness -= 5
+        self.fullness -= 10
+        self.happiness -= 5
 
     def shopping_fur(self):
         if self.house.get_money() >= 400:
@@ -367,14 +389,14 @@ class Wife(Human):
             cprint('==================', color='red')
 
 
-class Cat:
+class Cat(LivingBeing):
 
     def __init__(self, name):
+        super().__init__()
         self.name = name
         self.fullness = 30
+        self.appetite = 10
         self.house = None
-        self.living = True
-        self.count_living_days = 0
         self.stroking_cat = False
         self.quantity_stroking = 0
         self.name_owner = None
@@ -386,6 +408,9 @@ class Cat:
             str_print = 'Я кот - {}, моя смерть наступила на {} день'.format(
                 self.name, self.count_living_days)
         return str_print
+
+    def get_count_living_days(self):
+        return self.count_living_days
 
     def annual_result(self):
         return 'Я кот - {}, сытость {}, меня гладили {} раз'.format(
@@ -411,18 +436,18 @@ class Cat:
     def eat(self):
         if self.house.get_animal_food() >= 10:
             cprint('Кот {} поел'.format(self.name), color='magenta')
-            self.fullness += 10
-            self.house.decrease_animal_food(quantity=10)
+            self.fullness += self.appetite
+            self.house.decrease_animal_food(quantity=self.appetite)
         else:
-            self.fullness -= 10
+            self.fullness -= self.appetite
             cprint('У кота {} нет еды. Остался голодный на всесь день'.format(self.name), color='magenta')
 
     def sleep(self):
-        self.fullness -= 10
+        self.fullness -= self.appetite
         cprint('Кот {} дрых весь день'.format(self.name), color='magenta')
 
     def strip_wallpaper(self):
-        self.fullness -= 10
+        self.fullness -= self.appetite
         self.house.add_debris(quantity=5)
         cprint('Кот {} подрал обои'.format(self.name), color='magenta')
 
