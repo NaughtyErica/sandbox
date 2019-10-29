@@ -126,6 +126,149 @@ class LivingBeing:
         return self.living
 
 
+class Pet(LivingBeing):
+
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+        self.fullness = 30
+        self.appetite = 10
+        self.house = None
+
+
+class Cat(Pet):
+
+    def __init__(self, name):
+        super().__init__(name=name)
+        self.stroking_cat = False
+        self.quantity_stroking = 0
+        self.name_owner = None
+
+    def __str__(self):
+        if self.living:
+            str_print = 'Я кот - {}, сытость {}'.format(self.name, self.fullness)
+        else:
+            str_print = 'Я кот - {}, моя смерть наступила на {} день'.format(
+                self.name, self.count_living_days)
+        return str_print
+
+    def get_count_living_days(self):
+        return self.count_living_days
+
+    def annual_result(self):
+        return 'Я кот - {}, сытость {}, меня гладили {} раз'.format(
+            self.name, self.fullness, self.quantity_stroking)
+
+    def set_stroking_cat(self, name_owner=None):
+        self.stroking_cat = True
+        self.name_owner = name_owner
+        self.quantity_stroking += 1
+
+    def get_cat_name(self):
+        return self.name
+
+    def stroking(self):
+        cprint('Кота {} гладил {} целый день'.format(self.name, self.name_owner), color='magenta')
+
+        self.stroking_cat = False
+
+    def settle_in_house(self, house):
+        self.house = house
+        cprint('Кот {} поселился в доме'.format(self.name), color='magenta')
+
+    def eat(self):
+        if self.house.get_animal_food() >= 10:
+            cprint('Кот {} поел'.format(self.name), color='magenta')
+            self.fullness += self.appetite
+            self.house.decrease_animal_food(quantity=self.appetite)
+        else:
+            self.fullness -= self.appetite
+            cprint('У кота {} нет еды. Остался голодный на всесь день'.format(self.name), color='magenta')
+
+    def sleep(self):
+        self.fullness -= self.appetite
+        cprint('Кот {} дрых весь день'.format(self.name), color='magenta')
+
+    def strip_wallpaper(self):
+        self.fullness -= self.appetite
+        self.house.add_debris(quantity=5)
+        cprint('Кот {} подрал обои'.format(self.name), color='magenta')
+
+    def act(self):
+        if self.living:
+            dice = randint(1, 6)
+            self.count_living_days += 1
+            if self.fullness < 0:
+                cprint('Кот {} умер...'.format(self.name), color='red')
+                self.living = False
+                return
+            if self.stroking_cat:
+                self.stroking()
+            elif self.fullness < 20:
+                self.eat()
+            elif dice in (1, 3, 5):
+                self.sleep()
+            else:
+                self.strip_wallpaper()
+        else:
+            cprint('=======================', color='red')
+
+
+class Dog(Pet):
+
+    def __init__(self, name):
+        super().__init__(name=name)
+        self.stroking_cat = False
+        self.quantity_stroking = 0
+        self.name_owner = None
+
+    def __str__(self):
+        if self.living:
+            if self.fullness < 0:
+                cprint('Собака {} умерла...'.format(self.name), color='red')
+                self.living = False
+            str_print = 'Я собака - {}, сытость {}'.format(self.name, self.fullness)
+        else:
+            str_print = '========================='
+        return str_print
+
+    def eat(self):
+        if self.house.animal_food >= 10:
+            cprint('Собака {} поела'.format(self.name), color='yellow')
+            self.fullness += 20
+            self.house.animal_food -= 10
+        else:
+            self.fullness -= 10
+            cprint('У собаки {} нет еды, осталась голодная на весь день'.format(self.name), color='red')
+
+    def crew_furniture(self):
+        self.fullness -= 10
+        self.house.debris += 5
+        cprint('Собака {} грызла мебель'.format(self.name), color='red')
+
+    def fight_with_cat(self, cat):
+        self.fullness -= 10
+        self.house.debris += 5
+        cprint('Собака {} дралась с котом {}'.format(self.name, cat.name), color='red')
+
+    def act(self):
+        if self.living:
+            dice = randint(1, 4)
+            self.house.number_fighting_cat = 0
+            if self.fullness < 20:
+                self.eat()
+            elif dice == 1 and cat1.living and cat1.fullness > 10:
+                self.house.number_fighting_cat = 1
+                self.fight_with_cat(cat=cat1)
+            elif dice == 2 and cat2.living and cat2.fullness > 10:
+                self.house.number_fighting_cat = 2
+                self.fight_with_cat(cat=cat2)
+            else:
+                self.crew_furniture()
+        else:
+            cprint('=======================', color='red')
+
+
 class Human(LivingBeing):
 
     def __init__(self):
@@ -387,88 +530,6 @@ class Wife(Human):
                 self.shopping_fur()
         else:
             cprint('==================', color='red')
-
-
-class Cat(LivingBeing):
-
-    def __init__(self, name):
-        super().__init__()
-        self.name = name
-        self.fullness = 30
-        self.appetite = 10
-        self.house = None
-        self.stroking_cat = False
-        self.quantity_stroking = 0
-        self.name_owner = None
-
-    def __str__(self):
-        if self.living:
-            str_print = 'Я кот - {}, сытость {}'.format(self.name, self.fullness)
-        else:
-            str_print = 'Я кот - {}, моя смерть наступила на {} день'.format(
-                self.name, self.count_living_days)
-        return str_print
-
-    def get_count_living_days(self):
-        return self.count_living_days
-
-    def annual_result(self):
-        return 'Я кот - {}, сытость {}, меня гладили {} раз'.format(
-            self.name, self.fullness, self.quantity_stroking)
-
-    def set_stroking_cat(self, name_owner=None):
-        self.stroking_cat = True
-        self.name_owner = name_owner
-        self.quantity_stroking += 1
-
-    def get_cat_name(self):
-        return self.name
-
-    def stroking(self):
-        cprint('Кота {} гладил {} целый день'.format(self.name, self.name_owner), color='magenta')
-
-        self.stroking_cat = False
-
-    def settle_in_house(self, house):
-        self.house = house
-        cprint('Кот {} поселился в доме'.format(self.name), color='magenta')
-
-    def eat(self):
-        if self.house.get_animal_food() >= 10:
-            cprint('Кот {} поел'.format(self.name), color='magenta')
-            self.fullness += self.appetite
-            self.house.decrease_animal_food(quantity=self.appetite)
-        else:
-            self.fullness -= self.appetite
-            cprint('У кота {} нет еды. Остался голодный на всесь день'.format(self.name), color='magenta')
-
-    def sleep(self):
-        self.fullness -= self.appetite
-        cprint('Кот {} дрых весь день'.format(self.name), color='magenta')
-
-    def strip_wallpaper(self):
-        self.fullness -= self.appetite
-        self.house.add_debris(quantity=5)
-        cprint('Кот {} подрал обои'.format(self.name), color='magenta')
-
-    def act(self):
-        if self.living:
-            dice = randint(1, 6)
-            self.count_living_days += 1
-            if self.fullness < 0:
-                cprint('Кот {} умер...'.format(self.name), color='red')
-                self.living = False
-                return
-            if self.stroking_cat:
-                self.stroking()
-            elif self.fullness < 20:
-                self.eat()
-            elif dice in (1, 3, 5):
-                self.sleep()
-            else:
-                self.strip_wallpaper()
-        else:
-            cprint('=======================', color='red')
 
 
 home = House()
