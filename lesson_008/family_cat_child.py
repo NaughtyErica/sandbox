@@ -149,7 +149,7 @@ class Pet(LivingBeing):
         super().__init__()
         self.name = name
         self.fullness = 30
-        self.appetite = 10
+        self.appetite = 9
         self.house = None
 
     def __str__(self):
@@ -166,7 +166,7 @@ class Pet(LivingBeing):
         return result_str
 
     def eat(self):
-        if self.house.get_animal_food() >= 10:
+        if self.house.get_animal_food() >= 9:
             result_str = ' {} поел'.format(self.name)
             self.fullness += self.appetite
             self.house.decrease_animal_food(self.appetite)
@@ -190,7 +190,7 @@ class Cat(Pet):
         self.stroking_cat = False
         self.quantity_stroking = 0
         self.name_owner = None
-        self.appetite = 9
+        self.appetite = 8
 
     def __str__(self):
         return 'Я кот' + super().__str__()
@@ -199,7 +199,7 @@ class Cat(Pet):
         return 'Кот' + super().settle_in_house(house=house)
 
     def eat(self):
-        return 'Кот' + super().eat()
+        cprint('Кот' + super().eat(), color='magenta')
 
     def annual_result(self):
         return 'Я кот {}, меня гладили {} раз,'.format(
@@ -236,7 +236,7 @@ class Cat(Pet):
                 return
             if self.stroking_cat:
                 self.stroking()
-            elif self.fullness < 20:
+            elif self.fullness < 18:
                 self.eat()
             elif dice in (1, 3, 5):
                 self.sleep()
@@ -260,7 +260,7 @@ class Dog(Pet):
         return 'Собака' + super().settle_in_house(house=house)
 
     def eat(self):
-        return 'Собака' + super().eat()
+        cprint('Собака' + super().eat(), color='blue')
 
     def annual_result(self):
         return 'Я собака {}, гуляла {} раз, грызла мебель {},'.format(
@@ -280,7 +280,12 @@ class Dog(Pet):
     def act(self):
         if self.living:
             dice = randint(1, 5)
-            if self.fullness < 20:
+            self.count_living_days += 1
+            if self.fullness < 0:
+                cprint('Собака {} умера...'.format(self.name), color='red')
+                self.living = False
+                return
+            if self.fullness < 18:
                 self.eat()
             elif dice in (1, 3):
                 self.walk()
@@ -292,11 +297,12 @@ class Dog(Pet):
 
 class Human(LivingBeing):
 
-    def __init__(self):
+    def __init__(self, name):
         super().__init__()
         self.fullness = 50
         self.happiness = 0
         self.appetite = 30
+        self.name = name
         self.house = None
         self.stroking_cat = False
 
@@ -308,23 +314,9 @@ class Human(LivingBeing):
             str_print = 'моя смерть наступила на {} день'.format(self.count_living_days)
         return str_print
 
-
-class Child(Human):
-
-    def __init__(self, name):
-        super().__init__()
-        self.fullness = 30
-        self.happiness = 100
-        self.name = name
-        self.appetite = 10
-
-    def __str__(self):
-        return 'Я маленький ребенок {}, '.format(
-            self.name) + super().__str__()
-
     def settle_in_house(self, house):
         self.house = house
-        cprint('Маленького ребенка {} принесли из роддома'.format(self.name), color='green')
+        return ' {} поселился в доме'.format(self.name)
 
     def eat(self):
         if self.house.get_food() >= 30:
@@ -333,9 +325,26 @@ class Child(Human):
             self.house.decrease_food(quantity=self.appetite)
             self.house.add_total_food_eating(quantity=self.appetite)
         else:
-            cprint('{} хотел поесть, но у него нет еды и он орал от голода целый день'.format(self.name), color='green')
+            cprint('{} хотел поесть, но у него нет еды'.format(self.name), color='green')
             self.fullness -= self.appetite
-            self.happiness -= 50
+            self.happiness -= 10
+            return True
+
+
+class Child(Human):
+
+    def __init__(self, name):
+        super().__init__(name=name)
+        self.fullness = 30
+        self.happiness = 100
+        self.appetite = 10
+
+    def __str__(self):
+        return 'Я маленький ребенок {}, '.format(
+            self.name) + super().__str__()
+
+    def settle_in_house(self, house):
+        return 'Маленький ребенок' + super().settle_in_house(house=house)
 
     def sleep(self):
         self.fullness -= self.appetite
@@ -359,8 +368,7 @@ class Child(Human):
 class Husband(Human):
 
     def __init__(self, name):
-        super().__init__()
-        self.name = name
+        super().__init__(name=name)
         self.quantity_tanks = 0
         self.salary = 200
         self.total_salary = 0
@@ -372,36 +380,23 @@ class Husband(Human):
         return 'Я муж {}, у меня танков  {}, '.format(
             self.name, self.quantity_tanks) + super().__str__()
 
-    def set_quarrel_with_wife(self):
-        self.quarrel_with_wife = True
+    def settle_in_house(self, house):
+        return 'Муж ' + super().settle_in_house(house=house)
 
     def marriage(self, wife):
         self.wife = wife
         self.happiness += 100
         cprint('{} женился на {}'.format(self.name, self.wife.name), color='blue')
 
-    def settle_in_house(self, house):
-        self.house = house
-        cprint('{} поселился в доме'.format(self.name), color='blue')
-
-    def eat(self):
-        if self.house.get_food() >= 30:
-            cprint('{} поел'.format(self.name), color='blue')
-            self.fullness += self.appetite
-            self.house.decrease_food(quantity=self.appetite)
-            self.house.add_total_food_eating(quantity=self.appetite)
-            self.happiness += 5
-        else:
-            cprint('{} хотел поесть, но у него нет еды'.format(self.name), color='blue')
-            self.fullness -= 10
-            self.happiness -= 5
+    def set_quarrel_with_wife(self):
+        self.quarrel_with_wife = True
 
     def work(self):
         cprint('{} сходил на работу'.format(self.name), color='blue')
         self.house.add_money(quantity=self.salary)
         self.total_salary += self.salary
         self.fullness -= 10
-        self.happiness -= 5
+        self.happiness += 10
         self.total_days_work += 1
 
     def gaming(self):
@@ -448,8 +443,7 @@ class Husband(Human):
 class Wife(Human):
 
     def __init__(self, name):
-        super().__init__()
-        self.name = name
+        super().__init__(name=name)
         self.quantity_fur = 0
         self.quantity_quarrel = 0
         self.husband = None
@@ -459,39 +453,29 @@ class Wife(Human):
         return 'Я жена {}, у меня шуб {}, '.format(
             self.name, self.quantity_fur) + super().__str__()
 
+    def settle_in_house(self, house):
+        return 'Жена ' + super().settle_in_house(house=house)
+
     def marriage(self, husband):
         self.husband = husband
         self.happiness += 100
         cprint('{} вышла замуж за {}'.format(self.name, self.husband.name), color='cyan')
 
-    def settle_in_house(self, house):
-        self.house = house
-        cprint('{} поселилась в доме'.format(self.name), color='cyan')
-
     def eat(self):
-        if self.house.get_food() >= 30:
-            cprint('{} поела'.format(self.name), color='cyan')
-            self.fullness += self.appetite
-            self.house.decrease_food(quantity=self.appetite)
-            self.house.add_total_food_eating(quantity=self.appetite)
-            self.happiness += 5
-        else:
-            cprint('{} хотела поесть, но у нее нет еды'.format(self.name), color='cyan')
-            self.fullness -= 10
-            self.happiness -= 5
+        if super().eat():
             self.shopping()
 
     def shopping(self):
         if self.house.get_money() >= 120:
             if self.house.get_food() <= 50:
                 cprint('{} сходила в магазин за едой для людей'.format(self.name), color='cyan')
-                self.house.decrease_money(quantity=100)
-                self.house.add_food(quantity=100)
+                self.house.decrease_money(quantity=120)
+                self.house.add_food(quantity=120)
             else:
                 if self.house.get_quantity_living_pet() > 0:
                     cprint('{} сходила в магазин за едой для домашних питомцев'.format(self.name), color='cyan')
-                    self.house.decrease_money(quantity=60)
-                    self.house.add_animal_food(quantity=60)
+                    self.house.decrease_money(quantity=150)
+                    self.house.add_animal_food(quantity=150)
                 else:
                     cprint('{} погрустила об умерших домашних питомцах'.format(self.name), color='cyan')
 
@@ -563,10 +547,9 @@ cat3 = Cat(name='Рыжик')
 dog = Dog(name='Жучка')
 serge.marriage(wife=masha)
 masha.marriage(husband=serge)
-serge.settle_in_house(house=home)
-masha.settle_in_house(house=home)
-mitya.settle_in_house(house=home)
-
+cprint(serge.settle_in_house(house=home), color='white')
+cprint(masha.settle_in_house(house=home), color='white')
+cprint(mitya.settle_in_house(house=home), color='white')
 cprint(cat1.settle_in_house(house=home), color='white')
 cprint(cat2.settle_in_house(house=home), color='white')
 cprint(cat3.settle_in_house(house=home), color='white')
