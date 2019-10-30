@@ -154,24 +154,33 @@ class Pet(LivingBeing):
 
     def __str__(self):
         if self.living:
-            str_print = ' сытость {}'.format(self.name, self.fullness)
+            str_print = ' {}, сытость {}'.format(self.name, self.fullness)
         else:
-            str_print = ' моя смерть наступила на {} день'.format(
+            str_print = ' {}, моя смерть наступила на {} день'.format(
                 self.name, self.count_living_days)
         return str_print
 
+    def settle_in_house(self, house):
+        self.house = house
+        result_str = ' {} поселился в доме'.format(self.name)
+        return result_str
+
     def eat(self):
         if self.house.get_animal_food() >= 10:
-            cprint('Домашний питомец {} поел'.format(self.name), color='yellow')
+            result_str = ' {} поел'.format(self.name)
             self.fullness += self.appetite
             self.house.decrease_animal_food(self.appetite)
         else:
             self.fullness -= self.appetite
-            cprint('У домашнего питомеца {} нет еды, остался голодный на весь день'.format(self.name), color='red')
+            result_str = ' {} остался голодный на весь день'.format(self.name)
+        return result_str
 
-    def settle_in_house(self, house):
-        self.house = house
-        cprint('Домашний питомец {} поселился в доме'.format(self.name), color='magenta')
+    def annual_result(self):
+        if self.living:
+            result_str = ' сытость {}'.format(self.fullness)
+        else:
+            result_str = ' но я умер на {} день'.format(self.count_living_days)
+        return result_str
 
 
 class Cat(Pet):
@@ -184,15 +193,17 @@ class Cat(Pet):
         self.appetite = 9
 
     def __str__(self):
-        return 'Я кот {}, '.format(
-            self.name) + super().__str__()
+        return 'Я кот' + super().__str__()
+
+    def settle_in_house(self, house):
+        return 'Кот' + super().settle_in_house(house=house)
+
+    def eat(self):
+        return 'Кот' + super().eat()
 
     def annual_result(self):
-        result_str = 'Я кот - {}, сытость {}, меня гладили {} раз'.format(
-            self.name, self.fullness, self.quantity_stroking)
-        if not self.living:
-            result_str += ', но я умер на {} день'.format(self.count_living_days)
-        return result_str
+        return 'Я кот {}, меня гладили {} раз,'.format(
+            self.name, self.quantity_stroking) + super().annual_result()
 
     def set_stroking_cat(self, name_owner=None):
         self.stroking_cat = True
@@ -243,15 +254,17 @@ class Dog(Pet):
         self.quantity_crew = 0
 
     def __str__(self):
-        return 'Я собака {}, '.format(
-            self.name) + super().__str__()
+        return 'Я собака' + super().__str__()
+
+    def settle_in_house(self, house):
+        return 'Собака' + super().settle_in_house(house=house)
+
+    def eat(self):
+        return 'Собака' + super().eat()
 
     def annual_result(self):
-        result_str = 'Я собака - {}, сытость {}, я гуляла {} раз и грызла мебель {} раз'.format(
-            self.name, self.fullness, self.quantity_walk, self.quantity_crew)
-        if not self.living:
-            result_str += ', но я умера на {} день'.format(self.count_living_days)
-        return result_str
+        return 'Я собака {}, гуляла {} раз, грызла мебель {},'.format(
+            self.name, self.quantity_walk, self.quantity_walk) + super().annual_result()
 
     def crew_furniture(self):
         self.fullness -= self.appetite
@@ -553,10 +566,11 @@ masha.marriage(husband=serge)
 serge.settle_in_house(house=home)
 masha.settle_in_house(house=home)
 mitya.settle_in_house(house=home)
-cat1.settle_in_house(house=home)
-cat2.settle_in_house(house=home)
-cat3.settle_in_house(house=home)
-dog.settle_in_house(house=home)
+
+cprint(cat1.settle_in_house(house=home), color='white')
+cprint(cat2.settle_in_house(house=home), color='white')
+cprint(cat3.settle_in_house(house=home), color='white')
+cprint(dog.settle_in_house(house=home), color='white')
 home.add_cat(new_cat=cat1)
 home.add_cat(new_cat=cat2)
 home.add_cat(new_cat=cat3)
