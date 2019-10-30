@@ -260,7 +260,7 @@ class Dog(Pet):
         return 'Собака' + super().settle_in_house(house=house)
 
     def eat(self):
-        cprint('Собака' + super().eat(), color='blue')
+        cprint('Собака' + super().eat(), color='magenta')
 
     def annual_result(self):
         return 'Я собака {}, гуляла {} раз, грызла мебель {},'.format(
@@ -270,12 +270,12 @@ class Dog(Pet):
         self.fullness -= self.appetite
         self.quantity_crew += 1
         self.house.add_debris(quantity=5)
-        cprint('Собака {} грызла мебель весь день'.format(self.name), color='red')
+        cprint('Собака {} грызла мебель весь день'.format(self.name), color='magenta')
 
     def walk(self):
         self.fullness -= 10
         self.quantity_walk += 1
-        cprint('Собака {} весь день гуляла во дворе'.format(self.name), color='red')
+        cprint('Собака {} весь день гуляла во дворе'.format(self.name), color='magenta')
 
     def act(self):
         if self.living:
@@ -414,10 +414,10 @@ class Husband(Human):
         cat_count_living_day = self.house.get_cat_by_number(number_cat=number_cat).get_count_living_days()
         if self.house.get_cat_by_number(number_cat=number_cat).is_living():
             cprint('{} скандалил с женой и для успокоения гладил кота {}!'.format(
-                self.name, cat_name), color='yellow')
+                self.name, cat_name), color='blue')
         else:
             cprint('{} скандалил с женой и оплакивал умершего на {} день от голода кота {}!'.format(
-                self.name, cat_count_living_day, cat_name), color='yellow')
+                self.name, cat_count_living_day, cat_name), color='blue')
             self.happiness -= 10
 
     def act(self):
@@ -547,13 +547,13 @@ cat3 = Cat(name='Рыжик')
 dog = Dog(name='Жучка')
 serge.marriage(wife=masha)
 masha.marriage(husband=serge)
-cprint(serge.settle_in_house(house=home), color='white')
-cprint(masha.settle_in_house(house=home), color='white')
-cprint(mitya.settle_in_house(house=home), color='white')
-cprint(cat1.settle_in_house(house=home), color='white')
-cprint(cat2.settle_in_house(house=home), color='white')
-cprint(cat3.settle_in_house(house=home), color='white')
-cprint(dog.settle_in_house(house=home), color='white')
+cprint(serge.settle_in_house(house=home), color='blue')
+cprint(masha.settle_in_house(house=home), color='cyan')
+cprint(mitya.settle_in_house(house=home), color='green')
+cprint(cat1.settle_in_house(house=home), color='magenta')
+cprint(cat2.settle_in_house(house=home), color='magenta')
+cprint(cat3.settle_in_house(house=home), color='magenta')
+cprint(dog.settle_in_house(house=home), color='magenta')
 home.add_cat(new_cat=cat1)
 home.add_cat(new_cat=cat2)
 home.add_cat(new_cat=cat3)
