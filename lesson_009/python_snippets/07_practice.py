@@ -11,22 +11,26 @@ from random import randint
 
 
 class Chatterer:
-    analize_count = 4
+    analise_count = 4
 
     def __init__(self, file_name):
         self.file_name = file_name
         self.stat = {}
+        self.sequence = ''
+        self.totals = {}
+        self.stat_for_generate = {}
 
     def unzip(self):
-        zfile = zipfile.ZipFile(self.file_name, 'r')
-        for filename in zfile.namelist():
-            zfile.extract(filename)
+        zip_file = zipfile.ZipFile(self.file_name, 'r')
+        filename = ''
+        for filename in zip_file.namelist():
+            zip_file.extract(filename)
         self.file_name = filename
 
     def collect(self):
         if self.file_name.endswith('.zip'):
             self.unzip()
-        self.sequence = ' ' * self.analize_count
+        self.sequence = ' ' * self.analise_count
         with open(self.file_name, 'r', encoding='cp1251') as file:
             for line in file:
                 self._collect_for_line(line=line[:-1])
@@ -43,8 +47,6 @@ class Chatterer:
             self.sequence = self.sequence[1:] + char
 
     def prepare(self):
-        self.totals = {}
-        self.stat_for_generate = {}
         for sequence, char_stat in self.stat.items():
             self.totals[sequence] = 0
             self.stat_for_generate[sequence] = []
@@ -53,18 +55,19 @@ class Chatterer:
                 self.stat_for_generate[sequence].append([count, char])
                 self.stat_for_generate[sequence].sort(reverse=True)
 
-    def chat(self, N, out_file_name=None):
-        N = 1000
+    def chat(self, length_story=0, out_file_name=None):
+        length_story = length_story
         printed = 0
         if out_file_name is not None:
             file = open(out_file_name, 'w', encoding='utf8')
         else:
             file = None
 
-        sequence = ' ' * self.analize_count
+        sequence = ' ' * self.analise_count
         spaces_printed = 0
-        while printed < N:
-            char = self._get_char(char_stat=self.stat_for_generate[sequence], total=self.totals[sequence])
+        while printed < length_story:
+            char = self._get_char(char_stat=self.stat_for_generate[sequence],
+                                  total=self.totals[sequence])
             if file:
                 file.write(char)
             else:
@@ -81,10 +84,12 @@ class Chatterer:
             sequence = sequence[1:] + char
         if file:
             file.close()
-
-    def _get_char(self, char_stat, total):
+    
+    @staticmethod
+    def _get_char(char_stat, total):
         dice = randint(1, total)
         pos = 0
+        char = ''
         for count, char in char_stat:
             pos += count
             if dice <= pos:
@@ -95,4 +100,4 @@ class Chatterer:
 chatterer = Chatterer(file_name='voyna-i-mir.txt.zip')
 chatterer.collect()
 chatterer.prepare()
-chatterer.chat(N=10000, out_file_name='out.txt')
+chatterer.chat(length_story=10000, out_file_name='out.txt')
