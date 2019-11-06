@@ -196,7 +196,7 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         """ Определится у каждого конкретного наследованного класса """
         pass
 
-    def print_sorted_stat(self, left_width=0, right_width=0) -> None:
+    def print_sorted_stat(self, left_width=0, right_width=0, align=(0, 0)) -> None:
         """
         :param left_width: ширина левой колонки
         :param right_width: ширина правой колонки
@@ -228,9 +228,9 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         :param hor_chr: символ линии
         В шаблон не входит
         """
-        left_width = left_width
-        right_width = right_width
-        hor_chr = hor_chr
+        # left_width = left_width
+        # right_width = right_width
+        # hor_chr = hor_chr
         print(f'+{hor_chr * left_width}+{hor_chr * right_width}+')
 
     @staticmethod
@@ -247,10 +247,10 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         """
         left_str_print = ''
         right_str_print = ''
-        left_str = left_str
-        right_str = right_str
-        width = width
-        align = align
+        # left_str = left_str
+        # right_str = right_str
+        # width = width
+        # align = align
 
         if align[0] == 0:
             left_str_print = left_str.center(width[0], ' ')
