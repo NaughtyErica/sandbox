@@ -298,17 +298,37 @@ class StatSortFrequency(AbstractStatisticClass):
         :param desc: принимает True - убывание, False - возрастание
         """
         self.stat_lst.sort(reverse=self.desc)
-        self.sorted_left_str_lst = []
-        self.sorted_right_str_lst = []
         for i in range(self.different_chars):
             self.sorted_left_str_lst.append(self.item_on_key(self.stat_dict, self.stat_lst[i]))
             self.sorted_right_str_lst.append(str(self.stat_lst[i]))
 
 
-stat_sort1 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
-stat_sort1.make_statistic(left_width=10, right_width=10, align=(0, 1))
+class StatSortAlpha(AbstractStatisticClass):
 
-stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=False)
-stat_sort2.make_statistic(left_width=10, right_width=10, align=(0, 1))
+    def __init__(self, file_name, desc=True):
+        super().__init__(file_name=file_name)
+        self.desc = desc
+
+    def sort_stat(self):
+        """
+        Конкретная реализация абстарктного метода из унаследованного класса:
+        сортировка результатаов статистики по убыванию символа
+        :param desc: принимает True - убывание, False - возрастание
+        """
+        self.char_set.sort(reverse=self.desc)
+        for char in self.char_set:
+            self.sorted_left_str_lst.append(char)
+            self.sorted_right_str_lst.append(str(self.stat_dict[char]))
 
 
+# stat_sort1 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
+# stat_sort1.make_statistic(left_width=10, right_width=10, align=(0, 1))
+#
+# stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=False)
+# stat_sort2.make_statistic(left_width=10, right_width=10, align=(0, 1))
+#
+# stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=False)
+# stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
+
+stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=True)
+stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
