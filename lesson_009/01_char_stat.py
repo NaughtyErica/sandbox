@@ -154,14 +154,14 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         self.different_chars = 0
         self.file_content_char = None
 
-    def make_statistic(self, left_width=0, right_width=0) -> None:
+    def make_statistic(self, left_width=0, right_width=0, align=(0, 0)) -> None:
         """
         Шаблонный метод
         """
         self.read_file()
         self.find_frequency_chars()
         self.sort_stat()
-        self.print_sorted_stat(left_width=left_width, right_width=right_width)
+        self.print_sorted_stat(left_width=left_width, right_width=right_width, align=align)
 
     def read_file(self) -> None:
         """
@@ -198,8 +198,10 @@ class AbstractStatisticClass(metaclass=ABCMeta):
 
     def print_sorted_stat(self, left_width=0, right_width=0, align=(0, 0)) -> None:
         """
+
         :param left_width: ширина левой колонки
         :param right_width: ширина правой колонки
+        :param align: выравнивание содежжимого колонок в теде таблицы
         Вывод на консоль отсортированной статистики
         У всех наследованных классов одинаковый, в шаблон входит
         """
@@ -209,14 +211,14 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         self.print_line_table(left_width=left_width, right_width=right_width, hor_chr='-')
         for i in range(self.different_chars):
             self.print_body_line_table(left_str=self.sorted_left_str_lst[i], right_str=self.sorted_right_str_lst[i],
-                                       width=(left_width, right_width), align=(0, 1))
+                                       width=(left_width, right_width), align=align)
         self.print_line_table(left_width=left_width, right_width=right_width, hor_chr='-')
         right_str = str(self.different_chars)
         self.print_body_line_table(left_str='Разных', right_str=right_str,
-                                   width=(left_width, right_width), align=(0, 1))
+                                   width=(left_width, right_width), align=(1, 1))
         right_str = str(self.total_chars)
         self.print_body_line_table(left_str='Всего', right_str=right_str,
-                                   width=(left_width, right_width), align=(0, 1))
+                                   width=(left_width, right_width), align=(1, 1))
         self.print_line_table(left_width=left_width, right_width=right_width, hor_chr='=')
 
     @staticmethod
@@ -228,9 +230,6 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         :param hor_chr: символ линии
         В шаблон не входит
         """
-        # left_width = left_width
-        # right_width = right_width
-        # hor_chr = hor_chr
         print(f'+{hor_chr * left_width}+{hor_chr * right_width}+')
 
     @staticmethod
@@ -247,10 +246,6 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         """
         left_str_print = ''
         right_str_print = ''
-        # left_str = left_str
-        # right_str = right_str
-        # width = width
-        # align = align
 
         if align[0] == 0:
             left_str_print = left_str.center(width[0], ' ')
@@ -278,7 +273,11 @@ class AbstractStatisticClass(metaclass=ABCMeta):
             print(self.char_set[i], self.stat_lst[i])
 
 
-class StatSortDescFrequency(AbstractStatisticClass):
+class StatSortFrequency(AbstractStatisticClass):
+
+    def __init__(self, file_name, desc=True):
+        super().__init__(file_name=file_name)
+        self.desc = desc
 
     @staticmethod
     def item_on_key(dict_for_find, value=None):
@@ -295,9 +294,10 @@ class StatSortDescFrequency(AbstractStatisticClass):
     def sort_stat(self):
         """
         Конкретная реализация абстарктного метода из унаследованного класса:
-        сортировка результатаов статистики по возрастанию частоты символа
+        сортировка результатаов статистики по убыванию частоты символа
+        :param desc: принимает True - убывание, False - возрастание
         """
-        self.stat_lst.sort(reverse=True)
+        self.stat_lst.sort(reverse=self.desc)
         self.sorted_left_str_lst = []
         self.sorted_right_str_lst = []
         for i in range(self.different_chars):
@@ -305,6 +305,10 @@ class StatSortDescFrequency(AbstractStatisticClass):
             self.sorted_right_str_lst.append(str(self.stat_lst[i]))
 
 
-stat_sort1 = StatSortDescFrequency(file_name='python_snippets/voyna-i-mir.txt')
-stat_sort1.make_statistic(left_width=10, right_width=10)
+stat_sort1 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
+stat_sort1.make_statistic(left_width=10, right_width=10, align=(0, 1))
+
+stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=False)
+stat_sort2.make_statistic(left_width=10, right_width=10, align=(0, 1))
+
 
