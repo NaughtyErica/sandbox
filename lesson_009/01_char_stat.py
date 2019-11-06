@@ -198,7 +198,6 @@ class AbstractStatisticClass(metaclass=ABCMeta):
 
     def print_sorted_stat(self, left_width=0, right_width=0, align=(0, 0)) -> None:
         """
-
         :param left_width: ширина левой колонки
         :param right_width: ширина правой колонки
         :param align: выравнивание содежжимого колонок в теде таблицы
