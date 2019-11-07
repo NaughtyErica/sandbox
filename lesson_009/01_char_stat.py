@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import pprint as pp
 # Подсчитать статистику по буквам в романе Война и Мир.
 # Входные параметры: файл для сканирования
 # Статистику считать только для букв алфавита (см функцию .isalpha() для строк)
@@ -135,6 +134,27 @@ import pprint as pp
 
 
 from abc import ABCMeta, abstractmethod
+import lesson_009.speed_metr as sm
+
+# from datetime import datetime
+#
+#
+# class SpeedMetrics:
+#     def __init__(self, name_process=''):
+#         self.time_start = None
+#         self.time_finish = None
+#         self.interval = None
+#         self.name_process = name_process
+#
+#     def start(self):
+#         self.time_start = datetime.now()
+#
+#     def finish(self):
+#         self.time_finish = datetime.now()
+#
+#     def get_interval(self):
+#         result = self.time_finish - self.time_start
+#         print(self.name_process, result)
 
 
 class AbstractStatisticClass(metaclass=ABCMeta):
@@ -158,10 +178,19 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         """
         Шаблонный метод
         """
+        time_st = sm.SpeedMetrics()
+        time_st.start(name_process='Чтение файла')
         self.read_file()
+        time_st.get_interval()
+        time_st.start(name_process='Заполнение статистики')
         self.find_frequency_chars()
+        time_st.get_interval()
+        time_st.start(name_process='Сортировка')
         self.sort_stat()
+        time_st.get_interval()
+        time_st.start(name_process='Печать отчета')
         self.print_sorted_stat(left_width=left_width, right_width=right_width, align=align)
+        time_st.get_interval()
 
     def read_file(self) -> None:
         """
@@ -312,7 +341,6 @@ class StatSortAlpha(AbstractStatisticClass):
         """
         Конкретная реализация абстарктного метода из унаследованного класса:
         сортировка результатаов статистики по убыванию символа
-        :param desc: принимает True - убывание, False - возрастание
         """
         self.char_set.sort(reverse=self.desc)
         for char in self.char_set:
@@ -320,14 +348,21 @@ class StatSortAlpha(AbstractStatisticClass):
             self.sorted_right_str_lst.append(str(self.stat_dict[char]))
 
 
+time_stat = sm.SpeedMetrics()
+time_stat.start(name_process='Вся задача')
 # stat_sort1 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
 # stat_sort1.make_statistic(left_width=10, right_width=10, align=(0, 1))
 #
-# stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=False)
-# stat_sort2.make_statistic(left_width=10, right_width=10, align=(0, 1))
+stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=False)
+stat_sort2.make_statistic(left_width=10, right_width=10, align=(0, 1))
 #
 # stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=False)
 # stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
 
-stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=True)
-stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
+# stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=True)
+# stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
+
+time_stat.get_interval()
+
+
+
