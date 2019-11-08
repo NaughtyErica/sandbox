@@ -280,7 +280,9 @@ class AbstractStatisticClass(metaclass=ABCMeta):
 
 
 class StatSortFrequency(AbstractStatisticClass):
-
+    """
+    Класс потомок с реальзацие сортировки по частоте символов
+    """
     def __init__(self, file_name='', desc=True):
         super().__init__(file_name=file_name)
         self.desc = desc
@@ -299,7 +301,9 @@ class StatSortFrequency(AbstractStatisticClass):
 
 
 class StatSortAlpha(AbstractStatisticClass):
-
+    """
+    Класс потомок с реализацией сортировки по алфавиту
+    """
     def __init__(self, file_name, desc=True):
         super().__init__(file_name=file_name)
         self.desc = desc
