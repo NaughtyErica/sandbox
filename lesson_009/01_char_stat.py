@@ -286,32 +286,16 @@ class StatSortFrequency(AbstractStatisticClass):
         self.desc = desc
         self.stat_lst = []
 
-    @staticmethod
-    def _item_on_key(dict_for_find=None, value=None):
-        """
-        Вспомогательный метод получения из словаря ключа по его заначению
-        :param dict_for_find: словарь для поиска
-        :param value: значение, по которому ищется его ключ
-        :return: ключ
-        """
-        for key, it in dict_for_find.items():
-            if it == value:
-                dict_for_find[key] = 0
-                return key
-
     def sort_stat(self):
         """
         Конкретная реализация абстарктного метода из унаследованного класса:
         сортировка результатаов статистики по убыванию частоты символа
         :param desc: принимает True - убывание, False - возрастание
         """
-        for char in self.stat_dict.keys():
-            self.stat_lst.append(self.stat_dict[char])
-        self.stat_lst.sort(reverse=self.desc)
-
+        self.stat_lst = sorted(self.stat_dict.items(), key=lambda item: item[1], reverse=self.desc)
         for i in range(self.different_chars):
-            self.sorted_left_str_lst.append(self._item_on_key(self.stat_dict, self.stat_lst[i]))
-            self.sorted_right_str_lst.append(str(self.stat_lst[i]))
+            self.sorted_left_str_lst.append(self.stat_lst[i][0])
+            self.sorted_right_str_lst.append(str(self.stat_lst[i][1]))
 
 
 class StatSortAlpha(AbstractStatisticClass):
@@ -340,13 +324,13 @@ time_stat.start(name_process='Время выполения задачи')
 # stat_sort1 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
 # stat_sort1.make_statistic(left_width=10, right_width=10, align=(0, 1))
 #
-# stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=False)
-# stat_sort2.make_statistic(left_width=10, right_width=10, align=(0, 1))
+stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
+stat_sort2.make_statistic(left_width=8, right_width=10, align=(1, 1))
 #
 # stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=False)
 # stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
 
-stat_sort4 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=True)
-stat_sort4.make_statistic(left_width=10, right_width=10, align=(0, 1))
+# stat_sort4 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=True)
+# stat_sort4.make_statistic(left_width=10, right_width=10, align=(0, 1))
 
 time_stat.get_interval()
