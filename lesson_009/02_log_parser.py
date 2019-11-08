@@ -30,49 +30,88 @@ class AbstractParserClass(metaclass=ABCMeta):
     def __init__(self, input_file_name='', output_file_name='') -> None:
         self.input_file_name = input_file_name
         self.output_file_name = output_file_name
-        self.stat_dict = {}
-        self.statistic_line = ''
         self.log_list = []
+        self.str_out_list = []
 
-    def read_write_files(self) -> None:
+    def read_input_file(self) -> None:
         input_file = open(self.input_file_name, mode='r', encoding='utf8')
-        output_file = open(self.output_file_name, mode='w', encoding='utf8')
-        line = True
-        while line:
-            line = input_file.readline()
-            if 'NOK' in line:
-                i = 0
-                date_time = None
-
+        for line in input_file:
+            self.log_list.append(line)
         input_file.close()
+
+    def write_output_file(self) -> None:
+        output_file = open(self.output_file_name, mode='w', encoding='utf8')
+        output_file.writelines(self.str_out_list)
         output_file.close()
 
+    def parser(self):
+        self.read_input_file()
+        self.parser_lines()
+        self.write_output_file()
+
     @abstractmethod
-    def parser_line(self, line='') -> None:
+    def parser_lines(self) -> None:
         pass
 
 
 class ParserLog(AbstractParserClass):
 
-    def parser_line(self, line=''):
+    def __init__(self, input_file_name='', output_file_name='', select='NOK', interval='s'):
+        super().__init__(input_file_name=input_file_name, output_file_name=output_file_name, )
+        self.select = select
+        # select принмает значания Y - год, m - месяц, d - день, H - час, M - минута
+        self.interval = interval
+
+    # def parser_lines(self):
+    #     prev_date = None
+    #     count_nok = 0
+    #     input_file = open(self.input_file_name, mode='r', encoding='utf8')
+    #     for line in input_file:
+    #         if 'NOK'in line:
+    #             date = datetime.strptime(line[1:20], "%Y-%m-%d %H:%M:%S")
+    #             if prev_date:
+    #                 count_nok += 1
+    #                 if date.minute > prev_date.minute:
+    #                     str_date = prev_date.strftime("%Y-%m-%d %H.%M")
+    #                     str_out = f'[{str_date}]  {count_nok}'
+    #                     print(str_out)
+    #                     count_nok = 0
+    #             prev_date = date
+    #     input_file.close()
+
+    def parser_lines(self):
         prev_date = None
-        count_nok = 0
-        with open(self.input_file_name) as input_file:
-            for line in input_file:
-                if 'NOK'in line:
-                    date = datetime.strptime(line[1:20], "%Y-%m-%d %H:%M:%S")
-                    if prev_date:
-                        count_nok += 1
+        count_select = 0
+
+        for line in self.log_list:
+            if self.select in line:
+                date = datetime.strptime(line[1:20], "%Y-%m-%d %H:%M:%S")
+                if prev_date:
+                    count_select += 1
+                    if self.interval == 'M':
                         if date.minute > prev_date.minute:
-                            str_date = prev_date.strftime("%Y-%m-%d-%H.%M")
-                            str_out = f'[{str_date}]  {count_nok}'
-                            print(str_out)
-                            count_nok = 0
-                    prev_date = date
+                            str_date = prev_date.strftime("%Y-%m-%d %H.%M")
+                            str_out = f'[{str_date}]  {count_select} \n'
+                            self.str_out_list.append(str_out)
+                            count_select = 0
+                    elif self.interval == 'H':
+                        if date.hour > prev_date.hour:
+                            str_date = prev_date.strftime("%Y-%m-%d %H.%M")
+                            str_out = f'[{str_date}]  {count_select} \n'
+                            self.str_out_list.append(str_out)
+                            count_select = 0
+                    elif self.interval == 'd':
+                        if date.day > prev_date.day:
+                            str_date = prev_date.strftime("%Y-%m-%d %H.%M")
+                            str_out = f'[{str_date}]  {count_select} \n'
+                            self.str_out_list.append(str_out)
+                            count_select = 0
+
+                prev_date = date
 
 
-par = ParserLog(input_file_name='events.txt')
-par.parser_line()
+par = ParserLog(input_file_name='events.txt', output_file_name='out.txt', select='NOK', interval='d')
+par.parser()
 
 # После выполнения первого этапа нужно сделать группировку событий
 #  - по часам

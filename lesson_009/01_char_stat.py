@@ -143,7 +143,7 @@ class AbstractStatisticClass(metaclass=ABCMeta):
     Абстрактный класс сбора и вывода статистики по буквам в текстовом файле
     """
 
-    def __init__(self, file_name) -> None:
+    def __init__(self, file_name='') -> None:
         self.file_name = file_name
         self.stat_dict = {}
         self.sorted_left_str_lst = []
@@ -281,7 +281,7 @@ class AbstractStatisticClass(metaclass=ABCMeta):
 
 class StatSortFrequency(AbstractStatisticClass):
 
-    def __init__(self, file_name, desc=True):
+    def __init__(self, file_name='', desc=True):
         super().__init__(file_name=file_name)
         self.desc = desc
         self.stat_lst = []
