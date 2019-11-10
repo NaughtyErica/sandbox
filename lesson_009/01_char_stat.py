@@ -144,6 +144,9 @@ class AbstractStatisticClass(metaclass=ABCMeta):
     """
 
     def __init__(self, file_name='') -> None:
+        """
+        :param file_name: имя входного файла для сбора статистики
+        """
         self.file_name = file_name
         self.stat_dict = {}
         self.sorted_left_str_lst = []
