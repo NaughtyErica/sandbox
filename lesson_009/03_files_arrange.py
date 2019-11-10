@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, time, shutil
+# import os, time, shutil
 
 # Нужно написать скрипт для упорядочивания фотографий (вообще любых файлов)
 # Скрипт должен разложить файлы из одной папки по годам и месяцам в другую.
@@ -36,60 +36,88 @@ import os, time, shutil
 
 import time
 import os
-import pprint
 import shutil
 
-source_dir = '/icons'
-target_dir = '/icons_by_year'
-year_dict = {}
+# source_dir = 'icons'
+# target_dir = 'icons_by_year'
+# year_dict = {}
+#
+# # Структура словаря для классификации файлов
+# # {2010: {01:[file_name1,
+# #             filename2,
+# #             ...
+# #            ],
+# #        02:[file_name3,
+# #            file_name4,
+# #            ...
+# #            ]
+# #        ...
+# #        }
+# #  2011: {01:[file_name5,
+# #             file_name6,
+# #             ...
+# #             ]
+# #        }
+# # }
+#
+# path_root = os.path.dirname(__file__)
+# path_source = os.path.join(path_root, source_dir)
+#
+# for dir_path, dir_names, file_names in os.walk(path_source):
+#     for name in file_names:
+#         full_file_path = os.path.join(dir_path, name)
+#         secs = os.path.getmtime(full_file_path)
+#         file_time = time.gmtime(secs)
+#         year = file_time.tm_year
+#         month = file_time.tm_mon
+#         if year in year_dict.keys():
+#             if month in year_dict[year].keys():
+#                 year_dict[year][month].append(full_file_path)
+#             else:
+#                 year_dict[year][month] = []
+#         else:
+#             year_dict[year] = {}
+#
+#
+# path_target = os.path.join(path_root, target_dir)
+# os.makedirs(path_target)
+# for year in year_dict.keys():
+#     path_target_year = os.path.join(path_target, str(year))
+#     os.makedirs(path_target_year)
+#     for month in year_dict[year].keys():
+#         path_target_year_month = os.path.join(path_target_year, str(month))
+#         os.makedirs(path_target_year_month)
+#         for file in year_dict[year][month]:
+#             shutil.copy2(file, path_target_year_month)
 
-# {2010: {01:[file_name1,
-#             filename2,
-#             ...
-#            ],
-#        02:[file_name3,
-#            file_name4,
-#            ...
-#            ]
-#        ...
-#        }
-#  2011: {01:[file_name5,
-#             file_name6,
-#             ...
-#             ]
-#        }
-# }
-
-path_root = os.path.dirname(__file__)
-path_source = path_root + source_dir
-path_normalized = os.path.normpath(path_source)
-for dir_path, dir_names, file_names in os.walk(path_normalized):
-    for name in file_names:
-        full_file_path = os.path.join(dir_path, name)
-        secs = os.path.getmtime(full_file_path)
-        file_time = time.gmtime(secs)
-        year = file_time.tm_year
-        month = file_time.tm_mon
-        if year in year_dict.keys():
-            if month in year_dict[year].keys():
-                year_dict[year][month].append(full_file_path)
-            else:
-                year_dict[year][month] = []
-        else:
-            year_dict[year] = {}
+# =======================================================================
 
 
-pprint.pprint(year_dict)
-path_target = path_root + target_dir
-os.makedirs(path_target)
-for year in year_dict.keys():
-    path_target_year = f'{path_target}/{str(year)}'
-    os.makedirs(path_target_year)
-    for month in year_dict[year].keys():
-        path_target_year_month = f'{path_target_year}/{str(month)}'
-        os.makedirs(path_target_year_month)
-        for file in year_dict[year][month]:
-            shutil.copy2(file, path_target_year_month)
+from abc import ABCMeta, abstractmethod
+
+
+class AbstractClassifierFilesClass(metaclass=ABCMeta):
+    """
+    
+    """
+    def __init__(self, source_dir='', target_dir='') -> None:
+        self.source_dir = source_dir
+        self.target_dir = target_dir
+        self.classifier_dict = {}
+
+    @abstractmethod
+    def make_classification(self) -> None:
+        pass
+
+    @abstractmethod
+    def copy_files_to_new_structure(self) -> None:
+        pass
+
+    def execute_copy(self):
+        self.make_classification()
+        self.copy_files_to_new_structure()
+
+
 
 
 # Усложненное задание (делать по желанию)
