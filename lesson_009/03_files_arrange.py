@@ -98,7 +98,7 @@ from abc import ABCMeta, abstractmethod
 
 class AbstractClassifierFilesClass(metaclass=ABCMeta):
     """
-    
+
     """
     def __init__(self, source_dir='', target_dir='') -> None:
         self.source_dir = source_dir
