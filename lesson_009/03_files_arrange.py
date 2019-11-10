@@ -38,6 +38,7 @@ import time
 import os
 import shutil
 
+#==================== первый рабочий вариант =====================
 # source_dir = 'icons'
 # target_dir = 'icons_by_year'
 # year_dict = {}
@@ -85,14 +86,12 @@ import shutil
 #     path_target_year = os.path.join(path_target, str(year))
 #     os.makedirs(path_target_year)
 #     for month in year_dict[year].keys():
-#         path_target_year_month = os.path.join(path_target_year, str(month))
+#         path_target_year_month = os.path.join(path_target_year, str(month).rjust(2, '0'))
 #         os.makedirs(path_target_year_month)
 #         for file in year_dict[year][month]:
 #             shutil.copy2(file, path_target_year_month)
 
-# =======================================================================
-
-
+# ===============второй вариант в классах с шаблонным методом=============
 from abc import ABCMeta, abstractmethod
 
 
@@ -162,13 +161,13 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
     def copy_files_to_new_structure(self):
         """
         Прохождение по словарю-классификатору и копирование файлов
-        в целепую папку
+        в целевую папку
         """
         for year in self.classifier_dict.keys():
             path_target_year = os.path.join(self.path_target, str(year))
             os.makedirs(path_target_year)
             for month in self.classifier_dict[year].keys():
-                path_target_year_month = os.path.join(path_target_year, str(month))
+                path_target_year_month = os.path.join(path_target_year, str(month).rjust(2, '0'))
                 os.makedirs(path_target_year_month)
                 for file in self.classifier_dict[year][month]:
                     shutil.copy2(file, path_target_year_month)
@@ -176,10 +175,6 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
 
 file_ym = ClassifierFilesYearMonth(source_dir='icons', target_dir='icons_by_year')
 file_ym.execute_copy()
-
-# source_dir = 'icons'
-# target_dir = 'icons_by_year'
-
 
 # Усложненное задание (делать по желанию)
 # Нужно обрабатывать zip-файл, содержащий фотографии, без предварительного извлечения файлов в папку.
