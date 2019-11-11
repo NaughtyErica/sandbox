@@ -1,22 +1,21 @@
-# -*- coding: utf-8 -*-
 
-import time
+from datetime import datetime
 import os
 import shutil
-
+import time
+import pprint
 
 from abc import ABCMeta, abstractmethod
 
 
 class AbstractClassifierFilesClass(metaclass=ABCMeta):
-
     def __init__(self, source_dir='', target_dir='') -> None:
         self.classifier_dict = {}
         self.path_root = os.path.dirname(__file__)
         self.path_source = os.path.join(self.path_root, source_dir)
         self.path_target = os.path.join(self.path_root, target_dir)
         os.makedirs(self.path_target)
-        
+
     @abstractmethod
     def make_classification(self) -> None:
         pass
@@ -38,6 +37,7 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
         self.count_target_files = 0
         print('Source path ->', self.path_source)
         print('Target path ->', self.path_target)
+        self.file_list = []
 
     def make_classification(self):
         print('Classification files process begin ...')
@@ -48,15 +48,19 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                 file_time = time.gmtime(secs)
                 year = file_time.tm_year
                 month = file_time.tm_mon
-                if year in self.classifier_dict.keys():
-                    if month in self.classifier_dict[year].keys():
-                        self.classifier_dict[year][month].append(full_file_path)
-                        self.count_source_files += 1
-                    else:
-                        self.classifier_dict[year][month] = []
-                else:
+                if year not in self.classifier_dict.keys():
                     self.classifier_dict[year] = {}
+                if month not in self.classifier_dict[year].keys():
+                    self.classifier_dict[year][month] = []
+                self.classifier_dict[year][month].append(full_file_path)
+                self.file_list.append(name)
+                self.count_source_files += 1 
+        
         print(self.count_source_files, 'files classified!')
+        print('Count Files', len(self.file_list))
+        pprint.pprint(self.classifier_dict)
+        pprint.pprint(self.file_list)
+        
 
     def copy_files_to_new_structure(self):
         print('Copy files process begin ...')
@@ -67,12 +71,15 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                 path_target_year_month = os.path.join(path_target_year, str(month).rjust(2, '0'))
                 os.makedirs(path_target_year_month)
                 for file in self.classifier_dict[year][month]:
-                    self.count_target_files += 1    
                     shutil.copy2(file, path_target_year_month)
-                    print(file, ' ---> ', path_target_year_month)
+                    self.count_target_files += 1
+                    #print(file, ' ---> ', path_target_year_month)
         print(self.count_target_files,  'files copied!')
 
 
-file_ym = ClassifierFilesYearMonth(source_dir='icons', target_dir='test')
+time_start = datetime.now()
+file_ym = ClassifierFilesYearMonth(source_dir='123', target_dir='456')
 file_ym.execute_copy()
-
+time_finish = datetime.now()
+delta = time_finish - time_start
+print(delta)
