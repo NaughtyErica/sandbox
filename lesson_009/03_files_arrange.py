@@ -37,6 +37,7 @@
 import time
 import os
 import shutil
+import random
 
 #==================== первый рабочий вариант =====================
 # source_dir = 'icons'
@@ -158,14 +159,12 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                 file_time = time.gmtime(secs)
                 year = file_time.tm_year
                 month = file_time.tm_mon
-                if year in self.classifier_dict.keys():
-                    if month in self.classifier_dict[year].keys():
-                        self.classifier_dict[year][month].append(full_file_path)
-                        self.count_source_files += 1
-                    else:
-                        self.classifier_dict[year][month] = []
-                else:
+                if year not in self.classifier_dict.keys():
                     self.classifier_dict[year] = {}
+                if month not in self.classifier_dict[year].keys():
+                    self.classifier_dict[year][month] = []
+                self.classifier_dict[year][month].append(full_file_path)
+                self.count_source_files += 1
         print(self.count_source_files, 'files classified!')
 
     def copy_files_to_new_structure(self):
@@ -181,9 +180,22 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                 path_target_year_month = os.path.join(path_target_year, str(month).rjust(2, '0'))
                 os.makedirs(path_target_year_month)
                 for file in self.classifier_dict[year][month]:
+                    name_with_ext = os.path.basename(file)
+                    path_target_year_month_file = os.path.join(path_target_year_month, name_with_ext)
+                    if os.path.isfile(path_target_year_month_file):
+                        index = name_with_ext.index('.')
+                        name = name_with_ext[:index]
+                        ext = name_with_ext[index:]
+                        suffix = str(random.randint(10000, 99999))
+                        new_name_with_ext = name + '_' + suffix + ext
+                        path_target_year_month_new_name_with_ext = os.path.join(
+                            path_target_year_month, new_name_with_ext)
+                        shutil.copyfile(file, path_target_year_month_new_name_with_ext)
+                        print(file, ' ===> ', path_target_year_month_new_name_with_ext)
+                    else:
+                        shutil.copy2(file, path_target_year_month)
+                        print(file, ' ---> ', path_target_year_month)
                     self.count_target_files += 1
-                    shutil.copy2(file, path_target_year_month)
-                    print(file, ' ---> ', path_target_year_month)
         print(self.count_target_files,  'files copied!')
 
 

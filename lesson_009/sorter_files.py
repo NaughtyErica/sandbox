@@ -73,7 +73,7 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                 for file in self.classifier_dict[year][month]:
                     shutil.copy2(file, path_target_year_month)
                     self.count_target_files += 1
-                    #print(file, ' ---> ', path_target_year_month)
+                    print(file, ' ---> ', path_target_year_month)
         print(self.count_target_files,  'files copied!')
 
 
