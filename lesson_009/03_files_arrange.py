@@ -191,10 +191,10 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                         path_target_year_month_new_name_with_ext = os.path.join(
                             path_target_year_month, new_name_with_ext)
                         shutil.copyfile(file, path_target_year_month_new_name_with_ext)
-                        print(file, ' ===> ', path_target_year_month_new_name_with_ext)
+                        print(new_name_with_ext, ' ===> ', path_target_year_month_new_name_with_ext)
                     else:
                         shutil.copy2(file, path_target_year_month)
-                        print(file, ' ---> ', path_target_year_month)
+                        print(name_with_ext, ' ---> ', path_target_year_month)
                     self.count_target_files += 1
         print(self.count_target_files,  'files copied!')
 
