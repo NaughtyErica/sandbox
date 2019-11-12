@@ -4,6 +4,7 @@ import os
 import shutil
 import time
 import pprint
+import random
 
 from abc import ABCMeta, abstractmethod
 
@@ -71,9 +72,22 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                 path_target_year_month = os.path.join(path_target_year, str(month).rjust(2, '0'))
                 os.makedirs(path_target_year_month)
                 for file in self.classifier_dict[year][month]:
-                    shutil.copy2(file, path_target_year_month)
+                    name_with_ext = os.path.basename(file)
+                    path_target_year_month_file = os.path.join(path_target_year_month, name_with_ext)
+                    if os.path.isfile(path_target_year_month_file):
+                        index = name_with_ext.index('.')
+                        name = name_with_ext[:index]
+                        ext = name_with_ext[index:]
+                        suffix = str(random.randint(10000, 99999))
+                        new_name_with_ext = name + '_' + suffix + ext
+                        path_target_year_month_new_name_with_ext = os.path.join(
+                            path_target_year_month, new_name_with_ext)
+                        shutil.copyfile(file, path_target_year_month_new_name_with_ext)
+                        print(new_name_with_ext, '==>', path_target_year_month)
+                    else:
+                        shutil.copy2(file, path_target_year_month)
+                        print(name_with_ext, '-->', path_target_year_month)
                     self.count_target_files += 1
-                    print(file, ' ---> ', path_target_year_month)
         print(self.count_target_files,  'files copied!')
 
 
