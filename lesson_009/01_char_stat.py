@@ -22,55 +22,77 @@
 # Требования к коду: он должен быть готовым к расширению функциональности. Делать сразу на классах.
 
 
-# class StatisticCharInFile:
+# class CharFrequenciesInFile:
 #
 #     def __init__(self, file_name):
 #         self.file_name = file_name
-#         self.stat_dict = {}
-#         self.stat_lst = []
-#         self.char_set = []
-#         self.sorted_left_str_lst = []
-#         self.sorted_right_str_lst = []
+#         self.dict_char_frequencies = {}
+#         self.lst_frequencies = []
+#         self.lst_sorted_cells_left_column_table = []
+#         self.lst_sorted_cells_right_column_table = []
 #         self.total_chars = 0
 #         self.different_chars = 0
-#         self.file_content_char = None
+#         self.file_contents = None
 #
 #     def read_file(self):
+#         """
+#         Чтение текстового файла целиком в переменную self.file_contents в кодировке cp1251.
+#         """
 #         with open(self.file_name, 'r', encoding='cp1251') as file:
-#             self.file_content_char = file.read()
+#             self.file_contents = file.read()
 #
 #     def find_frequency_chars(self):
-#         for char in self.file_content_char:
-#             if char in self.char_set:
-#                 self.stat_dict[char] += 1
-#                 idx = self.char_set.index(char)
-#                 self.stat_lst[idx] += 1
+#         """
+#         Поиск частот букв в прочитанном файле, заполенение словаря частот символов
+#         Подсчет количества уникальных букв и суммарное количество букв в файле
+#         """
+#         for char in self.file_contents:
+#             if char in self.dict_char_frequencies.keys():
+#                 self.dict_char_frequencies[char] += 1
 #                 self.total_chars += 1
 #             else:
 #                 if char.isalpha():
-#                     self.char_set.append(char)
-#                     self.stat_dict[char] = 1
-#                     self.stat_lst.append(1)
+#                     self.dict_char_frequencies[char] = 1
 #                     self.different_chars += 1
 #                     self.total_chars += 1
 #
 #     @staticmethod
 #     def item_on_key(dict_for_find={}, value=None):
+#         """
+#         Вспомогательный статический метод поиска ключа по значению
+#         для исключения выбора одного и того же ключа при одинаковых значениях,
+#         переданное значение после нахождения ключа обнуляется,
+#         исключая таким образом повторное его использование
+#         :param dict_for_find: словарь для поиска
+#         :param value: значение ключа
+#         :return: найденный ключ
+#         """
 #         for key, it in dict_for_find.items():
 #             if it == value:
 #                 dict_for_find[key] = 0
 #                 return key
 #
 #     @staticmethod
-#     def print_line_table(left_width=0, right_width=0, hor_chr='-'):
+#     def print_hor_line_table_border(left_width=0, right_width=0, hor_chr='-'):
+#         """
+#         Статический метод: печать горизотальной линии границы таблицы
+#         :param left_width: ширина левой колонки
+#         :param right_width: ширина правой колонки
+#         :param hor_chr: символ линии
+#         """
 #         print(f'+{hor_chr * left_width}+{hor_chr * right_width}+')
 #
 #     @staticmethod
-#     def print_body_line_table(left_str='', right_str='', width=(0, 0), align=(0, 0)):
+#     def print_table_row(left_str='', right_str='', width=(0, 0), align=(0, 0)):
 #         """
-#         variable align can be -1 for left, 0 for center and 1 for right aligned
-#         in align[0] for left column and align[1] for fight column
-#        """
+#         Статический метод: печать строки тела таблицы, состоящей из содержимого
+#         левой колонки и правой с их возможный выравниванием по левому, правому краю или по центру
+#         :param left_str: содержимое левой колонки
+#         :param right_str: содержимое правой колонки
+#         :param width: ширина левой колонки индекс [0] и правой - индекс [1]
+#         :param align: выравнивание: в левой колонке - индекс [0] и правой - индекс [1]
+#         значение параметра - 1 левое, 0 по центру, 1 правое выравнивание
+#         """
 #         left_str_print = ''
 #         right_str_print = ''
 #         if align[0] == 0:
@@ -89,43 +111,57 @@
 #
 #         print(f'|{left_str_print}|{right_str_print}|')
 #
-#     def sort_stat(self):
-#         self.stat_lst.sort(reverse=True)
-#         self.sorted_left_str_lst = []
-#         self.sorted_right_str_lst = []
+#     def _sort_stat(self):
+#         """
+#         Внутренний метод
+#         Сортировка результатаов статистики по убыванию частоты символа
+#         """
+#         for char in self.dict_char_frequencies.keys():
+#             self.lst_frequencies.append(self.dict_char_frequencies[char])
+#         self.lst_frequencies.sort(reverse=True)
 #         for i in range(self.different_chars):
-#             self.sorted_left_str_lst.append(self.item_on_key(self.stat_dict, self.stat_lst[i]))
-#             self.sorted_right_str_lst.append(str(self.stat_lst[i]))
+#             self.lst_sorted_cells_left_column_table.append(self.item_on_key(self.dict_char_frequencies,
+#                                                                             self.lst_frequencies[i]))
+#             self.lst_sorted_cells_right_column_table.append(str(self.lst_frequencies[i]))
 #
 #     def print_sorted_stat(self, left_width=0, right_width=0):
-
-#         self.print_line_table(left_width=left_width, right_width=right_width, hor_chr='=')
-#         self.print_body_line_table(left_str='Буква', right_str='Частота',
-#                                    width=(left_width, right_width), align=(0, 0))
-#         self.print_line_table(left_width=left_width, right_width=right_width, hor_chr='-')
+#         """
+#         Метод вывода на консоль отсортированной по убыванию частоты символов статистики
+#         :param left_width: ширина левой колонки
+#         :param right_width: ширина правой колонки
+#         """
+#         self._sort_stat()
+#         self.print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='=')
+#         self.print_table_row(left_str='Буква', right_str='Частота',
+#                              width=(left_width, right_width), align=(0, 0))
+#         self.print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='-')
 #         for i in range(self.different_chars):
-#             self.print_body_line_table(left_str=self.sorted_left_str_lst[i], right_str=self.sorted_right_str_lst[i],
-#                                        width=(left_width, right_width), align=(0, 1))
-#         self.print_line_table(left_width=left_width, right_width=right_width, hor_chr='-')
+#             self.print_table_row(left_str=self.lst_sorted_cells_left_column_table[i],
+#                                  right_str=self.lst_sorted_cells_right_column_table[i],
+#                                  width=(left_width, right_width), align=(0, 1))
+#         self.print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='-')
 #         right_str = str(self.different_chars)
-#         self.print_body_line_table(left_str='Разных', right_str=right_str,
-#                                    width=(left_width, right_width), align=(0, 1))
+#         self.print_table_row(left_str='Разных', right_str=right_str,
+#                              width=(left_width, right_width), align=(0, 1))
 #         right_str = str(self.total_chars)
-#         self.print_body_line_table(left_str='Всего', right_str=right_str,
-#                                    width=(left_width, right_width), align=(0, 1))
-#         self.print_line_table(left_width=left_width, right_width=right_width, hor_chr='=')
+#         self.print_table_row(left_str='Всего', right_str=right_str,
+#                              width=(left_width, right_width), align=(0, 1))
+#         self.print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='=')
 #
 #     def print_stat(self):
-#         self.print_line_table()
-#         for i in range(self.different_chars):
-#             print(self.char_set[i], self.stat_lst[i])
+#         """
+#         Вспомогательный метод
+#         печать сырой статистики для отладки
+#         """
+#         for char in self.dict_char_frequencies.keys():
+#             print(char, self.dict_char_frequencies[char])
 #
 #
-# find = StatisticCharInFile(file_name='python_snippets/voyna-i-mir.txt')
+# find = CharFrequenciesInFile(file_name='python_snippets/voyna-i-mir.txt')
 # find.read_file()
 # find.find_frequency_chars()
-# find.sort_stat()
 # find.print_sorted_stat(left_width=10, right_width=12)
+
 
 # После выполнения первого этапа нужно сделать упорядочивание статистики
 #  - по частоте по возрастанию
@@ -148,12 +184,12 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         :param file_name: имя входного файла для сбора статистики
         """
         self.file_name = file_name
-        self.stat_dict = {}
-        self.sorted_left_str_lst = []
-        self.sorted_right_str_lst = []
+        self.dict_char_frequencies = {}
+        self.lst_sorted_cells_left_column_table = []
+        self.lst_sorted_cells_right_column_table = []
         self.total_chars = 0
         self.different_chars = 0
-        self.file_content_char = None
+        self.file_contents = None
 
     def make_statistic(self, left_width=0, right_width=0, align=(0, 0)) -> None:
         """
@@ -166,11 +202,11 @@ class AbstractStatisticClass(metaclass=ABCMeta):
     def _read_file_all(self) -> None:
         """
         Внутренний вспомогательный метод:
-        чтение текстового файла целиком в переменную self.file_content_char в кодировке cp1251.
+        чтение текстового файла целиком в переменную self.file_contents в кодировке cp1251.
         Для отладки
         """
         with open(self.file_name, 'r', encoding='cp1251') as file:
-            self.file_content_char = file.read()
+            self.file_contents = file.read()
 
     def read_file_line(self) -> None:
         """
@@ -186,16 +222,17 @@ class AbstractStatisticClass(metaclass=ABCMeta):
     def _find_frequency_chars(self, line='') -> None:
         """
         Внутренний вспомогательный метод:
-        Поиск частот букв в прочитанном файле, заполенение словаря статистики
-        Подсчет количества уникальных и суммы букв
+        Поиск частот букв в прочитанном файле, заполенение словаря частот символов
+        Подсчет количества уникальных букв и суммарное количество букв в файле
+        :param line: строка, передаваемая из читаемого файла
         """
         for char in line:
-            if char in self.stat_dict.keys():
-                self.stat_dict[char] += 1
+            if char in self.dict_char_frequencies.keys():
+                self.dict_char_frequencies[char] += 1
                 self.total_chars += 1
             else:
                 if char.isalpha():
-                    self.stat_dict[char] = 1
+                    self.dict_char_frequencies[char] = 1
                     self.different_chars += 1
                     self.total_chars += 1
 
@@ -214,26 +251,27 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         Входит в шаблон
         :param left_width: ширина левой колонки
         :param right_width: ширина правой колонки
-        :param align: выравнивание содежжимого колонок в теде таблицы
+        :param align: выравнивание содежжимого колонок в теле таблицы
         """
-        self._print_line_table(left_width=left_width, right_width=right_width, hor_chr='=')
-        self._print_body_line_table(left_str='Буква', right_str='Частота',
-                                    width=(left_width, right_width), align=(0, 0))
-        self._print_line_table(left_width=left_width, right_width=right_width, hor_chr='-')
+        self._print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='=')
+        self._print_table_row(left_str='Буква', right_str='Частота',
+                              width=(left_width, right_width), align=(0, 0))
+        self._print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='-')
         for i in range(self.different_chars):
-            self._print_body_line_table(left_str=self.sorted_left_str_lst[i], right_str=self.sorted_right_str_lst[i],
-                                        width=(left_width, right_width), align=align)
-        self._print_line_table(left_width=left_width, right_width=right_width, hor_chr='-')
+            self._print_table_row(left_str=self.lst_sorted_cells_left_column_table[i],
+                                  right_str=self.lst_sorted_cells_right_column_table[i],
+                                  width=(left_width, right_width), align=align)
+        self._print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='-')
         right_str = str(self.different_chars)
-        self._print_body_line_table(left_str='Разных', right_str=right_str,
-                                    width=(left_width, right_width), align=(1, 1))
+        self._print_table_row(left_str='Разных', right_str=right_str,
+                              width=(left_width, right_width), align=(1, 1))
         right_str = str(self.total_chars)
-        self._print_body_line_table(left_str='Всего', right_str=right_str,
-                                    width=(left_width, right_width), align=(1, 1))
-        self._print_line_table(left_width=left_width, right_width=right_width, hor_chr='=')
+        self._print_table_row(left_str='Всего', right_str=right_str,
+                              width=(left_width, right_width), align=(1, 1))
+        self._print_hor_line_table_border(left_width=left_width, right_width=right_width, hor_chr='=')
 
     @staticmethod
-    def _print_line_table(left_width=0, right_width=0, hor_chr='-') -> None:
+    def _print_hor_line_table_border(left_width=0, right_width=0, hor_chr='-') -> None:
         """
         Вспомогательный статический метод: печать горизотальной линии границы таблицы
         :param left_width: ширина левой колонки
@@ -243,7 +281,7 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         print(f'+{hor_chr * left_width}+{hor_chr * right_width}+')
 
     @staticmethod
-    def _print_body_line_table(left_str='', right_str='', width=(0, 0), align=(0, 0)) -> None:
+    def _print_table_row(left_str='', right_str='', width=(0, 0), align=(0, 0)) -> None:
         """
         Вспомогательный статический метод: печать строки тела таблицы, состоящей из содержимого
         левой колонки и правой с их возможный выравниванием по левому, правому краю или по центру
@@ -277,8 +315,8 @@ class AbstractStatisticClass(metaclass=ABCMeta):
         Вспомогательный метод: печать сырой статистики
         для отладки
         """
-        for char in self.stat_dict.keys():
-            print(char, self.stat_dict[char])
+        for char in self.dict_char_frequencies.keys():
+            print(char, self.dict_char_frequencies[char])
         print(self.different_chars, self.total_chars)
 
 
@@ -287,20 +325,24 @@ class StatSortFrequency(AbstractStatisticClass):
     Класс потомок с реальзацие сортировки по частоте символов
     """
     def __init__(self, file_name='', desc=True):
+        """
+        :param file_name: Имя файла, передается в родительсикй класс
+        :param desc: True - убывание, False - возрастание
+        """
         super().__init__(file_name=file_name)
         self.desc = desc
-        self.stat_lst = []
+        self.lst_frequencies = []
 
     def sort_stat(self):
         """
         Конкретная реализация абстарктного метода из унаследованного класса:
-        сортировка результатаов статистики по убыванию частоты символа
-        :param desc: принимает True - убывание, False - возрастание
+        сортировка результатаов статистики по убыванию или возрастанию частоты символа
         """
-        self.stat_lst = sorted(self.stat_dict.items(), key=lambda item: item[1], reverse=self.desc)
+        self.lst_frequencies = sorted(self.dict_char_frequencies.items(),
+                                      key=lambda item: item[1], reverse=self.desc)
         for i in range(self.different_chars):
-            self.sorted_left_str_lst.append(self.stat_lst[i][0])
-            self.sorted_right_str_lst.append(str(self.stat_lst[i][1]))
+            self.lst_sorted_cells_left_column_table.append(self.lst_frequencies[i][0])
+            self.lst_sorted_cells_right_column_table.append(str(self.lst_frequencies[i][1]))
 
 
 class StatSortAlpha(AbstractStatisticClass):
@@ -308,22 +350,25 @@ class StatSortAlpha(AbstractStatisticClass):
     Класс потомок с реализацией сортировки по алфавиту
     """
     def __init__(self, file_name, desc=True):
+        """
+        :param file_name: Имя файла, передается в родительсикй класс
+        :param desc:  False - алфавитный порядок, True - обратный алфавитному
+        """
         super().__init__(file_name=file_name)
         self.desc = desc
-        self.char_lst = []
+        self.lst_chars = []
 
     def sort_stat(self):
         """
         Конкретная реализация абстарктного метода из унаследованного класса:
-        сортировка результатаов статистики по убыванию или возрастанию символа
-        :param desc: принимает True - убывание, False - возрастание
+        сортировка результатов статистики по убыванию или возрастанию символа
         """
-        for char in self.stat_dict.keys():
-            self.char_lst.append(char)
-        self.char_lst.sort(reverse=self.desc)
-        for char in self.char_lst:
-            self.sorted_left_str_lst.append(char)
-            self.sorted_right_str_lst.append(str(self.stat_dict[char]))
+        for char in self.dict_char_frequencies.keys():
+            self.lst_chars.append(char)
+        self.lst_chars.sort(reverse=self.desc)
+        for char in self.lst_chars:
+            self.lst_sorted_cells_left_column_table.append(char)
+            self.lst_sorted_cells_right_column_table.append(str(self.dict_char_frequencies[char]))
 
 
 time_stat = sm.SpeedMetrics()
@@ -331,11 +376,11 @@ time_stat.start(name_process='Время выполения задачи')
 # stat_sort1 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
 # stat_sort1.make_statistic(left_width=10, right_width=10, align=(0, 1))
 #
-stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
-stat_sort2.make_statistic(left_width=8, right_width=10, align=(1, 1))
+# stat_sort2 = StatSortFrequency(file_name='python_snippets/voyna-i-mir.txt', desc=True)
+# stat_sort2.make_statistic(left_width=8, right_width=10, align=(1, 1))
 #
-# stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=False)
-# stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
+stat_sort3 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=False)
+stat_sort3.make_statistic(left_width=10, right_width=10, align=(0, 1))
 
 # stat_sort4 = StatSortAlpha(file_name='python_snippets/voyna-i-mir.txt', desc=True)
 # stat_sort4.make_statistic(left_width=10, right_width=10, align=(0, 1))

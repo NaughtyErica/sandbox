@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# import os, time, shutil
-
 # Нужно написать скрипт для упорядочивания фотографий (вообще любых файлов)
 # Скрипт должен разложить файлы из одной папки по годам и месяцам в другую.
 # Например, так:
@@ -189,7 +187,7 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
                         suffix = str(random.randint(10000, 99999))
                         new_name_with_ext = name + '_' + suffix + ext
                         path_target_year_month_new_name_with_ext = os.path.join(
-                            path_target_year_month, new_name_with_ext)
+                                                                   path_target_year_month, new_name_with_ext)
                         shutil.copyfile(file, path_target_year_month_new_name_with_ext)
                         print(new_name_with_ext, ' ===> ', path_target_year_month_new_name_with_ext)
                     else:
@@ -201,7 +199,6 @@ class ClassifierFilesYearMonth(AbstractClassifierFilesClass):
 
 file_ym = ClassifierFilesYearMonth(source_dir='icons', target_dir='icons_by_year')
 file_ym.execute_copy()
-
 # Усложненное задание (делать по желанию)
 # Нужно обрабатывать zip-файл, содержащий фотографии, без предварительного извлечения файлов в папку.
 # Основная функция должна брать параметром имя zip-файла и имя целевой папки.

@@ -21,6 +21,9 @@
 
 from abc import ABCMeta, abstractmethod
 from datetime import datetime
+import re
+import sys
+import os
 
 
 class AbstractParserClass(metaclass=ABCMeta):
@@ -37,15 +40,27 @@ class AbstractParserClass(metaclass=ABCMeta):
         self.output_file_name = output_file_name
         self.log_list = []
         self.str_out_list = []
+        self.template = '\[\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{6}\]\sN?OK'
+        self.path_root = os.path.dirname(__file__)
 
     def read_input_file(self) -> None:
         """
         Метод входит в шаблон:
         чтение файла лога в список
+        Ссылка не регулярку https://regex101.com/r/a6L1VC/1
         """
-        input_file = open(self.input_file_name, mode='r', encoding='utf8')
+        path_input_file = os.path.join(self.path_root, self.input_file_name)
+        if os.path.isfile(path_input_file):
+            input_file = open(self.input_file_name, mode='r', encoding='utf8')
+        else:
+            sys.exit(f'Файл {self.input_file_name} не найден в текущем каталоге!')
         for line in input_file:
-            self.log_list.append(line)
+            if re.match(self.template, line) is None:
+                input_file.close()
+                print(line)
+                sys.exit('Не соотвествие строки файла шаблону')
+            else:
+                self.log_list.append(line)
         input_file.close()
 
     def write_output_file(self) -> None:
@@ -57,16 +72,16 @@ class AbstractParserClass(metaclass=ABCMeta):
         output_file.writelines(self.str_out_list)
         output_file.close()
 
-    def parser(self) -> None:
+    def parse(self) -> None:
         """
         Шаблонный метод
         """
         self.read_input_file()
-        self.parser_lines()
+        self.parse_lines()
         self.write_output_file()
 
     @abstractmethod
-    def parser_lines(self) -> None:
+    def parse_lines(self) -> None:
         """
         Абстрактый метод
         Входит в шаблон
@@ -107,7 +122,7 @@ class ParserLog(AbstractParserClass):
         self.count_select = 0
         self.assigned_values = True
 
-    def parser_lines(self):
+    def parse_lines(self):
         """
         Конкретная реализация абстарктного метода из унаследованного класса:
         посчет количества искомых значений select для различных периодов
@@ -140,8 +155,7 @@ class ParserLog(AbstractParserClass):
 
 par = ParserLog(input_file_name='events.txt', output_file_name='out.txt',
                 select='NOK', interval='M')
-par.parser()
-
+par.parse()
 # После выполнения первого этапа нужно сделать группировку событий
 #  - по часам
 #  - по месяцу
