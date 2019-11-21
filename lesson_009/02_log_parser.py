@@ -25,6 +25,8 @@ import re
 import sys
 import os
 
+LOG_ENTRY_RE = '\[\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{6}\]\sN?OK'
+
 
 class AbstractParserClass(metaclass=ABCMeta):
     """
@@ -40,7 +42,6 @@ class AbstractParserClass(metaclass=ABCMeta):
         self.output_file_name = output_file_name
         self.log_list = []
         self.str_out_list = []
-        self.template = '\[\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}\.\d{6}\]\sN?OK'
         self.path_root = os.path.dirname(__file__)
 
     def read_input_file(self) -> None:
@@ -55,7 +56,7 @@ class AbstractParserClass(metaclass=ABCMeta):
         else:
             sys.exit(f'Файл {self.input_file_name} не найден в текущем каталоге!')
         for line in input_file:
-            if re.match(self.template, line) is None:
+            if re.match(LOG_ENTRY_RE, line) is None:
                 input_file.close()
                 print(line)
                 sys.exit('Не соотвествие строки файла шаблону')
