@@ -91,7 +91,8 @@ class ValidatorLog:
                 self.file_out_good.write(self.line_from_file)
             else:
                 align_space = (35 - len(self.line_from_file[:-1])) * ' '
-                self.file_out_bad.write(f'{self.line_from_file[:-1]} {align_space} ===> {self.value_error_message} !!!\n')
+                self.file_out_bad.write(f'{self.line_from_file[:-1]} {align_space} ===> '
+                                        f'{self.value_error_message} !!!\n')
         self._close_files()
 
     def _validate_line(self):
