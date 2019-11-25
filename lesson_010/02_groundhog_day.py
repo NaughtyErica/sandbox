@@ -46,28 +46,23 @@ class SuicideError(Exception):
     pass
 
 
-def one_day(num_day=0):
+def one_day():
     dice = random.randint(1, 13)
     param_carma = 8 - dice
     carma_on_day = abs(param_carma) if param_carma != 0 else 1
-    try:
-        if dice == 13:
-            raise SuicideError('самоубился!')
-        elif dice == 12:
-            raise DepressionError('впал в дикую депрессию!')
-        elif dice == 11:
-            raise GluttonyError('обожрался, как свинья!')
-        elif dice == 10:
-            raise CarCrashError('устроил автокатастрофу!')
-        elif dice == 9:
-            raise DrunkError('напился до невменяемости!')
-        elif dice == 8:
-            raise IamGodError('решил, что он Бог!')
-    except Exception as exc:
-        log_str = f'День {num_day}. Карма {carma_on_day}. Филл {exc} \n'
-    else:
-        log_str = f'День {num_day}. Карма {carma_on_day}. У Филла был удачный день!\n'
-    return carma_on_day, log_str
+    if dice == 13:
+        raise SuicideError('самоубился!')
+    elif dice == 12:
+        raise DepressionError('впал в дикую депрессию!')
+    elif dice == 11:
+        raise GluttonyError('обожрался, как свинья!')
+    elif dice == 10:
+        raise CarCrashError('устроил автокатастрофу!')
+    elif dice == 9:
+        raise DrunkError('напился до невменяемости!')
+    elif dice == 8:
+        raise IamGodError('решил, что он Бог!')
+    return carma_on_day
 
 
 carma = 0
@@ -76,8 +71,13 @@ output_file = open('log_fill_days.txt', mode='w', encoding='utf8')
 
 while carma < ENLIGHTENMENT_CARMA_LEVEL:
     num_day_cycle += 1
-    result_day = one_day(num_day=num_day_cycle)
-    carma += result_day[0]
-    output_file.writelines(result_day[1])
+    carma_day = 1
+    try:
+        carma_day = one_day()
+    except Exception as exc:
+        log_str = f'День {num_day_cycle}. Карма {str(carma_day)}. Филл {exc} \n'
+    else:
+        log_str = f'День {num_day_cycle}. Карма {str(carma_day)}. У Филла был удачный день!\n'
+    carma += carma_day
+    output_file.writelines(log_str)
 output_file.close()
-

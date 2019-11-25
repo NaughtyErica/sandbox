@@ -24,7 +24,9 @@
 
 import re
 
-LOG_VALID_EMAIL_RE = '^.+@.+\..+'
+LOG_VALID_EMAIL_RE = r'^.+@.+\..+'
+FILE_NAME_OUT_GOOD = 'registrations_good.log'
+FILE_NAME_OUT_BAD = 'registrations_bad.log'
 
 
 class NotNameError(Exception):
@@ -45,11 +47,15 @@ class ValueAgeError(Exception):
 
 class ValidatorLog:
 
-    def __init__(self, file_name_log=''):
+    def __init__(self, file_name_log='', file_name_out_good=FILE_NAME_OUT_GOOD, file_name_out_bad=FILE_NAME_OUT_BAD):
         """
         :param file_name_log: имя входного файла лога
+        :param file_name_out_good: имя выходгного файла хороших записей
+        :param file_name_out_bad: имя выходного файла плохих записей
         """
         self.file_name_log = file_name_log
+        self.file_name_out_good = file_name_out_good
+        self.file_name_out_bad = file_name_out_bad
         self.line_from_file = ''
         self.file_log = None
         self.file_out_good = None
@@ -59,13 +65,13 @@ class ValidatorLog:
 
     def _open_files(self):
         """
-        Внутренний метод открытия всех файло: входной файл с логом для четния
+        Внутренний метод открытия всех файло: входной файл с логом для чтения
         и два выходных файла для записи ошибочных и верных регистраций
         :return: нет
         """
         self.file_log = open(self.file_name_log,  mode='r', encoding='utf8')
-        self.file_out_bad = open('registrations_bad.log',  mode='w', encoding='utf8')
-        self.file_out_good = open('registrations_good.log',  mode='w', encoding='utf8')
+        self.file_out_good = open(self.file_name_out_good,  mode='w', encoding='utf8')
+        self.file_out_bad = open(self.file_name_out_bad,  mode='w', encoding='utf8')
 
     def _close_files(self):
         """
@@ -76,51 +82,47 @@ class ValidatorLog:
         self.file_out_good.close()
         self.file_out_bad.close()
 
-    def validate_log(self):
+    def execute(self):
         """
         Основной метод класса по валидации читаемых строк из файла лога и
         записи верных и отбракованных строк в разные файлы
         Для самой валидации в цикле чтения ихсодного файла
-        вызывается внутренний метод _validate_line()
+        вызывается внутренний метод _validate_line(),
+        который при отбраковке строки генерирует соотвествующее исключение,
+        содержание которого вместе с отбракованной строкой пишем в файл плохих регистраций
         :return: нет
         """
         self._open_files()
         for self.line_from_file in self.file_log:
-            self._validate_line()
-            if self.line_good:
-                self.file_out_good.write(self.line_from_file)
-            else:
+            try:
+                self._validate_line()
+            except Exception as ext:
                 align_space = (35 - len(self.line_from_file[:-1])) * ' '
-                self.file_out_bad.write(f'{self.line_from_file[:-1]} {align_space} ===> '
-                                        f'{self.value_error_message} !!!\n')
+                self.file_out_bad.write(f'{self.line_from_file[:-1]} {align_space} ===> {ext} !!!\n')
+            else:
+                self.file_out_good.write(self.line_from_file)
         self._close_files()
 
     def _validate_line(self):
         """
         Внутренний метод валидации строки из исходного файла
         выполнятеся четыре типа проверки с генерации пользовательских исключений
-        с передачей их значений в поле self.value_error_message для записи
-        в файл отбракованных строк лога
+        !!! с пробросом содержания исключения в вызывающий метод !!!
+        для последующей записи его в файл отбракованных строк лога.
         Проверка корректности E-mail выполенна с помощью простейшего
         регулярного выражения https://regex101.com/r/1WyDiy/1
         :return: нет
         """
         separate_line_lst = self.line_from_file.split(' ')
-        try:
-            if len(separate_line_lst) < 3:
-                raise ValueCountError('Не присутствую все поля!')
-            elif not separate_line_lst[0].isalpha():
-                raise NotNameError('Неверное имя!')
-            elif re.match(LOG_VALID_EMAIL_RE, separate_line_lst[1]) is None:
-                raise NotEmailError('Некорректный E-mail!')
-            elif not 10 <= int(separate_line_lst[2][:-1]) <= 99:
-                raise ValueAgeError('Неверный возраст!')
-        except Exception as ext:
-            self.line_good = False
-            self.value_error_message = ext
-        else:
-            self.line_good = True
+        if len(separate_line_lst) < 3:
+            raise ValueCountError('Не присутствую все поля!')
+        elif not separate_line_lst[0].isalpha():
+            raise NotNameError('Неверное имя!')
+        elif re.match(LOG_VALID_EMAIL_RE, separate_line_lst[1]) is None:
+            raise NotEmailError('Некорректный E-mail!')
+        elif not 10 <= int(separate_line_lst[2][:-1]) <= 99:
+            raise ValueAgeError('Неверный возраст!')
 
 
 vl = ValidatorLog(file_name_log='registrations.txt')
-vl.validate_log()
+vl.execute()
