@@ -3,7 +3,6 @@ def escape(jar, fly):
     x0, y0, vx, vy = fly
     bank_hole_left_x = W / 2 - d / 2
     bank_hole_right_x = bank_hole_left_x + d
-    bank_hole_y = H
     num_hits_wall = 0
     while num_hits_wall < 20:
         # если эти времена равны - значит попали в угол
@@ -11,25 +10,23 @@ def escape(jar, fly):
         # если время по Y больше - значит попали в вертикальную стенку
         # вычисляем новые координаты
         # в зависимости от места попадания меняем векторы скорости
-        if vx > 0: # вправо
+        if vx > 0:  # вправо
             time_hit_x = abs((W - x0) / vx)
-        elif vx < 0:# влево
+        elif vx < 0:  # влево
             time_hit_x = abs(x0 / vx)
-        else:# без смещения по Х
+        else:  # без смещения по Х
             time_hit_x = 0
-
-        if vy > 0:# вверх
+        if vy > 0:  # вверх
             time_hit_y = abs((H - y0) / vy)
-        elif vy < 0:# вниз
+        elif vy < 0:  # вниз
             time_hit_y = abs(y0 / vy)
-        else:# без смещения по Y
+        else:  # без смещения по Y
             time_hit_y = 0
-
         if (time_hit_x < time_hit_y or time_hit_y == 0) and not time_hit_x == 0:
-            if vx > 0: # врезались в вертикальную стенку правую
+            if vx > 0:  # врезались в вертикальную стенку правую
                 x0 = W
                 y0 = y0 + time_hit_x * vy
-            elif vx < 0: # врезались в вертикальную стенку левую
+            elif vx < 0:  # врезались в вертикальную стенку левую
                 x0 = 0
                 y0 = y0 + time_hit_x * vy
             vx = -vx
@@ -37,7 +34,7 @@ def escape(jar, fly):
             if vy < 0:  # врезались в нижнюю стенку
                 y0 = 0
                 x0 = x0 + time_hit_y * vx
-            elif vy > 0: # врезались в верхнюю стенку
+            elif vy > 0:  # врезались в верхнюю стенку
                 y0 = H
                 x0 = x0 + time_hit_y * vx
                 if bank_hole_left_x < x0 < bank_hole_right_x:
@@ -61,8 +58,6 @@ def escape(jar, fly):
             vx = -vx
             vy = -vy
         num_hits_wall += 1
-
-        # print(f'x0={x0} y0={y0} vx={vx} vy={vy} столкновение {num_hits_wall}')
     return False
 
 
