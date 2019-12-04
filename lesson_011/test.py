@@ -14,19 +14,17 @@ for item in source_list:  # для каждого элемента исходн�
 print('null')
 print(target)
 
+
 # функциональный вариант
 print('first')
-
-
 def compose_func_first(f1, f2):
     def fabrica(x):
         return f1(f2(x))
     return fabrica
-
-
 target = map(compose_func_first(func_square, func_multiply_two), source_list)
 for item in target:
     print(item)
+
 
 
 print('second')
@@ -34,16 +32,17 @@ compose_func = lambda x: (x * 2) ** 2
 for item in source_list:
     print(compose_func(item))
 
+
+
 print('third')
 target = map(compose_func, source_list)
 for res in target:
     print(res)
 
+
+
 print('fourth')
-
-
 compose2 = lambda func_2, func_1: lambda x: func_2(func_1(x))
-
 target = map(compose2(func_square, func_multiply_two), source_list)
 for item in target:
     print(item)
