@@ -178,15 +178,15 @@ class ParserLogIterator(ParserLog):
         """
         self.position_in_out_list += 1
         if self.position_in_out_list < self.count_line_in_out_list:
-            return self.str_out_list[self.position_in_out_list][:19], \
-                   self.str_out_list[self.position_in_out_list][20:24]
+            return_str = self.str_out_list[self.position_in_out_list].rsplit(' ')
+            return f'{return_str[0]} {return_str[1]}', return_str[3]
         else:
             raise StopIteration()
 
     def write_output_file(self):
         """
         Переопределяем запись результата в файл для итератора,
-        пусть просто ничего не делает!
+        пусть он просто ничего не делает!
         """
         if self.output_file_name == 'prn':
             pass
