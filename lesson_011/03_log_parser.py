@@ -196,5 +196,3 @@ par = ParserLogIterator(input_file_name='events.txt', select='OK', interval='H')
 
 for group_time, event_count in par:
     print(f'{group_time} {event_count}')
-
-
