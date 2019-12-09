@@ -98,10 +98,7 @@ def check_automorphic_number(num=0):
     square = num * num
     str_square = str(square)
     str_tail_square = str_square[len_num:]
-    if str_num == str_tail_square:
-        return True
-    else:
-        return False
+    return str_num == str_tail_square
 
 
 def check_for_lucky_number(num=0):
@@ -118,26 +115,22 @@ def check_for_lucky_number(num=0):
         sum_left_part += int(str_num[i])
     for k in range(middle, len_num):
         sum_right_part += int(str_num[k])
-    if sum_left_part == sum_right_part and len_num > 1:
-        return True
-    else:
-        return False
+    return sum_left_part == sum_right_part and len_num > 1
 
 
 def check_palindromic_number(num=0):
-    str_num = str(num)
-    len_num = len(str_num)
-
-    if len_num % 2 != 0:
-        return False
-    else:
-        half_len = len_num // 2
-        left_part_str = str_num[:half_len]
-        right_part_str_invert = str_num[:half_len - 1:-1]
-        if left_part_str == right_part_str_invert:
-            return True
-        else:
-            return False
+    """
+    Оставил свой старый алгоритм, но в исправленном виде
+    для наглядности. А показанное очевидное решение я конечно осознал!
+    """
+    # str_num = str(num)
+    # len_num = len(str_num)
+    # half_len = len_num // 2
+    # left_part_str = str_num[:half_len]
+    # right_part_str_invert = str_num[:half_len:-1]
+    # print(left_part_str, right_part_str_invert)
+    # return left_part_str == right_part_str_invert
+    return str(num) == str(num)[::-1]
 
 
 def prime_numbers_generator_with_filters(n, *args):
