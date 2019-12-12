@@ -247,18 +247,18 @@ if __name__ == '__main__':
         name="Space war",
         speed=5,
         field=(1600, 800),
-        asteroids_count=50,
+        asteroids_count=30,
         can_fight=True,
         max_drones_at_team=12,
         # headless=True,
     )
 
-    DRONES_COUNT = 10
+    DRONES_COUNT = 5
 
     teamA = [WorkerDrone() for _ in range(DRONES_COUNT)]
     # teamB = [GreedyDrone() for _ in range(DRONES_COUNT)]
     teamC = [HunterDrone() for _ in range(DRONES_COUNT)]
-    # teamD = [DestroyerDrone() for _ in range(DRONES_COUNT)]
-    # teamD.extend(CowardDrone() for _ in range(2))
+    teamD = [DestroyerDrone() for _ in range(DRONES_COUNT)]
+    # teamD.extend(CowardDrone() for _ in range(5))
 
     space_field.go()

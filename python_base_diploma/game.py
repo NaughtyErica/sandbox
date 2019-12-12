@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # pip install -r requirements.txt
-
 from astrobox.space_field import SpaceField
-from python_base_diploma.kireev import UrikDrone
+from kireev import UrikDrone
 
 
 class DiplomaSpaceField(SpaceField):
@@ -58,9 +57,8 @@ class DiplomaSpaceField(SpaceField):
 
 if __name__ == '__main__':
     scene_1 = DiplomaSpaceField(speed=3,
-                                asteroids_count=10,
+                                asteroids_count=5,
                                 can_fight=True
                                 )
     d = UrikDrone()
     scene_1.go()
-

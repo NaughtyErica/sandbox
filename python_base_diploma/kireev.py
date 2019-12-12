@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import random
 
 from astrobox.core import Drone
 from robogame_engine.constants import GAME_OVER
@@ -18,14 +17,14 @@ class UrikDrone(Drone):
         self.count_asteroids = len(self.asteroids)
         self.number_visited_asteroid = self.scene.calculate_first_target()
         self.target = self.asteroids[self.number_visited_asteroid]
-
         print(f'Первая цель {self.target.coord}. Астероидов всего {self.count_asteroids}. '
               f'Летим на астероид номер {self.number_visited_asteroid}')
         self.move_at(self.target)
         self.my_team.append(self)
 
     def _get_my_asteroid(self):
-        new_number_target = self.scene.calculate_nearest_non_empty_asteroid(num_aster_for_calc=self.number_visited_asteroid)
+        new_number_target = self.scene.calculate_nearest_non_empty_asteroid(num_aster_for_calc=
+                                                                            self.number_visited_asteroid)
         self.number_visited_asteroid = new_number_target
         self.count_visited_asteroids += 1
         return self.asteroids[self.number_visited_asteroid]
