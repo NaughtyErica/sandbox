@@ -91,7 +91,7 @@ class AbstractReadTickerFileClass(metaclass=ABCMeta):
     """
     def __init__(self, input_file_name='') -> None:
         """
-        :param input_file_name: имя входного файла лога
+        :param input_file_name: имя входного файла тикера
         """
         self.input_file_name = input_file_name
         self.path_root = os.path.dirname(__file__)
@@ -102,7 +102,8 @@ class AbstractReadTickerFileClass(metaclass=ABCMeta):
     def read_input_file(self) -> None:
         """
         Метод входит в шаблон:
-        Чтение файла тикера в список
+        Чтение файла тикера в список self.ticker_price_list
+        и вычисление количества записей self.count_line_in_ticker
         регулярка https://regex101.com/r/FKEeIw/1
         """
         path_input_file = os.path.join(self.path_root, self.input_file_name)
@@ -130,7 +131,8 @@ class AbstractReadTickerFileClass(metaclass=ABCMeta):
 
     def run(self) -> None:
         """
-        Шаблонный метод
+        Шаблонный метод - чтение файла тикера и рассчет по нему
+        волатильности для этого тикера
         """
         self.read_input_file()
         self.calculate_volatility()
@@ -138,7 +140,7 @@ class AbstractReadTickerFileClass(metaclass=ABCMeta):
     @abstractmethod
     def calculate_volatility(self) -> None:
         """
-        Абстрактый метод
+        Абстрактый метод - рассчет волатильности
         Определится у наследованного класса
         """
         pass
@@ -161,6 +163,7 @@ class VolatilityTicker(AbstractReadTickerFileClass):
     def calculate_volatility(self):
         """
         Реализация метода рассчета volatility
+        среднее значение рассичтываю по сумме всех записей
         """
         for price in self.ticker_price_list:
             self.sum_price += price
@@ -202,7 +205,9 @@ class VolatilityTickerIterator(VolatilityTicker):
 
 
 class VolatilityTickersOnDir:
-
+    """
+    Класс рассчета волатильности по группе файлов, находящихся в исходной папке
+    """
     def __init__(self, source_dir='', ):
         """
         :param source_dir: имя исходной папки с файлами
@@ -214,6 +219,14 @@ class VolatilityTickersOnDir:
         self.count_tickers_non_zero = 0
 
     def execute(self):
+        """
+        Проход в цикле по всем файлам исходной папки
+        и создание объекта по классу VolatilityTicker на каждом шаге цикла
+        с рассчетом в нем значений и явное удаление объекта после использования
+        с последующим заполеним полученными значениями списков
+        self.tickers_volatility_list
+        self.zero_tickers_volatility_list
+        """
         for dir_path, dir_names, file_names in os.walk(self.path_source):
             for file_name in file_names:
                 path_input_file = os.path.join(self.path_source, file_name)
@@ -221,6 +234,7 @@ class VolatilityTickersOnDir:
                 tk.run()
                 tick = tk.get_volatility()
                 name_tick = tk.get_ticker_name()
+                del tk
                 if tick == 0.0:
                     self.zero_tickers_volatility_list.append(name_tick)
                 else:

@@ -30,8 +30,19 @@ TITLE_STR = 'SECID,TRADETIME,PRICE,QUANTITY\n'
 
 
 class VolatilityTicker(threading.Thread):
-
+    """
+    Класс рассчета волатильности тикера из одного файла
+    с применением семафора, объявленного в вызывающем процессе, для блокировки потока
+    """
     def __init__(self, input_file_name, tickers_list, zero_tickers_list, semaphore, *args, **kwargs):
+        """
+        :param input_file_name имя входного файла
+        :param tickers_list список не нулевых значений тикеров
+        :param zero_tickers_list сисок имен тикеров с нулевым значением
+        :param semaphore семафор для блокировки потока и передачи
+        вычисленных значений в вышеуказанные списки
+        *args, **kwargs уходят к родителю
+        """
         super().__init__(*args, **kwargs)
         self.tickers_list = tickers_list
         self.zero_tickers_list = zero_tickers_list
@@ -47,7 +58,7 @@ class VolatilityTicker(threading.Thread):
 
     def read_input_file(self):
         """
-        Чтение файла тикера в список
+        Чтение файла тикера в список self.ticker_price_list
         регулярка https://regex101.com/r/FKEeIw/1
         """
         path_input_file = os.path.join(self.path_root, self.input_file_name)
@@ -74,6 +85,9 @@ class VolatilityTicker(threading.Thread):
         input_file.close()
 
     def calculate_volatility(self):
+        """
+        Метод рассчета волатильности тикера сумме всех записей в файле
+        """
         for price in self.ticker_price_list:
             self.sum_price += price
         self.avg_price = self.sum_price / self.count_line_in_ticker_file
@@ -82,32 +96,29 @@ class VolatilityTicker(threading.Thread):
                            self.ticker_price_list[0]) / self.avg_price * 100
 
     def run(self):
+        """
+        Чтение файла тикера и рассчет по нему
+        волатильности для этого тикера
+        постановка семафора на КРАСНЫЙ, заполение списков, сброс семафора в ЗЕЛЕНЫЙ
+        """
         self.read_input_file()
         self.calculate_volatility()
-        # Прочитали файл и посчитали волатильность
         self.tickers_list_semaphore.acquire()
-        # Вклюбчаем семафор на красный
         if self.volatility == 0.0:
             self.zero_tickers_list.append(self.ticker_name)
         else:
             self.tickers_list.append([self.volatility, self.ticker_name])
-        # Создаем для рассчитанной волатильности элемент
-        # волатильностьб ТИКЕР в глобальном списке
         self.tickers_list_semaphore.release()
-        # Переключаем семафор на зеленый
-
-    def get_volatility(self):
-        return self.volatility
-
-    def get_ticker_name(self):
-        return self.ticker_name
 
 
 class VolatilityTickersOnDir:
-
+    """
+    Класс рассчета волатильности по группе файлов, находящихся в исходной папке
+    и выводов результатов на консоль с использованием потоков
+    """
     def __init__(self, source_dir='', ):
         """
-        :param source_dir: имя исходной папки с файлами
+        :param source_dir: имя исходной папки с файлами тикеров
         """
         self.path_root = os.path.dirname(__file__)
         self.path_source = os.path.join(self.path_root, source_dir)
@@ -117,6 +128,15 @@ class VolatilityTickersOnDir:
         self.input_file_name_list = []
 
     def execute(self):
+        """
+        Проход в цикле по всем файлам исходной папки
+        с заполенением списка исходных файлов self.input_file_name_list
+        Создание серии объектов по классу VolatilityTicker для
+        рассчета волатильности по каждому файлу и запуски этих объектов в потоки
+        Заполение вычисленных там значений в списки
+        self.tickers_volatility_list
+        self.zero_tickers_volatility_list
+        """
         for dir_path, dir_names, file_names in os.walk(self.path_source):
             for file_name in file_names:
                 path_input_file = os.path.join(self.path_source, file_name)
@@ -135,6 +155,9 @@ class VolatilityTickersOnDir:
             ticker.join()
 
     def print_result(self):
+        """
+        Печать полученных результатов на консоль согласно задания
+        """
         self.tickers_volatility_list.sort()
         self.zero_tickers_volatility_list.sort()
         print('Максимальная волатильность:')
