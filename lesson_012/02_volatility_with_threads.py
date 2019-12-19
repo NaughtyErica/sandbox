@@ -17,7 +17,6 @@
 #       ТИКЕР7, ТИКЕР8, ТИКЕР9, ТИКЕР10, ТИКЕР11, ТИКЕР12
 # Волатильности указывать в порядке убывания. Тикеры с нулевой волатильностью упорядочить по имени.
 
-from collections import defaultdict
 from lesson_012.python_snippets.utils import time_track
 import threading
 import re
