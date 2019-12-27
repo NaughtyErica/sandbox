@@ -1,25 +1,7 @@
-# -*- coding: utf-8 -*-
-
-
-# Задача: вычислить 3 тикера с максимальной и 3 тикера с минимальной волатильностью в МНОГОПРОЦЕССНОМ стиле
-#
-# Бумаги с нулевой волатильностью вывести отдельно.
-# Результаты вывести на консоль в виде:
-#   Максимальная волатильность:
-#       ТИКЕР1 - ХХХ.ХХ %
-#       ТИКЕР2 - ХХХ.ХХ %
-#       ТИКЕР3 - ХХХ.ХХ %
-#   Минимальная волатильность:
-#       ТИКЕР4 - ХХХ.ХХ %
-#       ТИКЕР5 - ХХХ.ХХ %
-#       ТИКЕР6 - ХХХ.ХХ %
-#   Нулевая волатильность:
-#       ТИКЕР7, ТИКЕР8, ТИКЕР9, ТИКЕР10, ТИКЕР11, ТИКЕР12
-# Волатильности указывать в порядке убывания. Тикеры с нулевой волатильностью упорядочить по имени.
-#
 from lesson_012.python_snippets.utils import time_track
 import multiprocessing
 import re
+import sys
 import os
 
 
@@ -55,42 +37,30 @@ class VolatilityTicker(multiprocessing.Process):
     def read_input_file(self):
         """
         Чтение файла тикера в список self.ticker_price_list
-        и вычисление количества записей self.count_line_in_ticker
         регулярка https://regex101.com/r/FKEeIw/1
-        Принимаем в работу следующую схему: если заголовок неверный,
-        значит это вообще не файл тикера, в рассчет его не берем,
-        иначе, если строки битые - их игнорируем, если нормальные - считаем,
-        если все строки битые - файл в рассчет не идет
         """
-        return_result = True
         path_input_file = os.path.join(self.path_root, self.input_file_name)
-        name = os.path.basename(self.input_file_name)
         if os.path.isfile(path_input_file):
-            with open(self.input_file_name, mode='r', encoding='utf8') as input_file:
-                title_str = input_file.readline()
-                if title_str != TITLE_STR:
-                    str_out_log_error = f'Файл {name} содержит ошибочный заголовок {title_str[:-1]}'
-                    print(str_out_log_error)
-                    print('Игнорируем его в рассчете!')
-                    return False
-                sec_id = None
-                for line in input_file:
-                    if re.match(TICKER_ENTRY_RE, line) is None:
-                        str_out_log_error = f'В файле {name} содержится ошибочная строка {line[:-1]}'
-                        print(str_out_log_error)
-                        print('Игнорируем ее в рассчете!')
-                    else:
-                        sec_id, trade_time, price, quantity = line.split(',')
-                        self.ticker_price_list.append(float(price))
-                self.ticker_name = sec_id
-                self.count_line_in_ticker_file = len(self.ticker_price_list)
-                if self.count_line_in_ticker_file == 0:
-                    return_result = False
+            input_file = open(self.input_file_name, mode='r', encoding='utf8')
         else:
-            str_out_log_error = f'Файл {name} не найден в заданном каталоге!'
-            print(str_out_log_error)
-            return False
-        return return_result
+            sys.exit(f'Файл {self.input_file_name} не найден в текущем каталоге!')
+        title_str = input_file.readline()
+        if title_str != TITLE_STR:
+            input_file.close()
+            print(title_str)
+            sys.exit('Неверный заголовок CSV-файла')
+        sec_id = None
+        for line in input_file:
+            if re.match(TICKER_ENTRY_RE, line) is None:
+                input_file.close()
+                print(line)
+                sys.exit('Не соотвествие строки файла шаблону')
+            else:
+                sec_id, trade_time, price, quantity = line.split(',')
+                self.ticker_price_list.append(float(price))
+        self.ticker_name = sec_id
+        self.count_line_in_ticker_file = len(self.ticker_price_list)
+        input_file.close()
 
     def calculate_volatility(self):
         """
@@ -109,8 +79,8 @@ class VolatilityTicker(multiprocessing.Process):
         волатильности для этого тикера и
         передача списка в очередь
         """
-        if self.read_input_file():
-            self.calculate_volatility()
+        self.read_input_file()
+        self.calculate_volatility()
         for_put = [self.volatility, self.ticker_name]
         self.tickers_list_collector.put(for_put)
 
@@ -157,7 +127,7 @@ class VolatilityTickersOnDir:
             ticker.join()
         while not collector_for_ticker_list.empty():
             list_from_collector = collector_for_ticker_list.get()
-            if list_from_collector[0] == 0.0 and list_from_collector[1] is not None:
+            if list_from_collector[0] == 0.0:
                 self.zero_tickers_volatility_list.append(list_from_collector[1])
             else:
                 self.tickers_volatility_list.append(list_from_collector)

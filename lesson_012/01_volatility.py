@@ -72,11 +72,9 @@
 #
 #     def run(self):
 #         <обработка данных>
-
 from abc import ABCMeta, abstractmethod
 from lesson_012.python_snippets.utils import time_track
 import re
-import sys
 import os
 
 
@@ -99,43 +97,54 @@ class AbstractReadTickerFileClass(metaclass=ABCMeta):
         self.count_line_in_ticker = 0
         self.ticker_name = ''
 
-    def read_input_file(self) -> None:
+    def read_input_file(self) -> bool:
         """
         Метод входит в шаблон:
         Чтение файла тикера в список self.ticker_price_list
         и вычисление количества записей self.count_line_in_ticker
         регулярка https://regex101.com/r/FKEeIw/1
+        Принимаем в работу следующую схему: если заголовок неверный,
+        значит это вообще не файл тикера, в рассчет его не берем,
+        иначе, если строки битые - их игнорируем, если нормальные - считаем,
+        если все строки битые - файл в рассчет не идет
         """
+        return_result = True
         path_input_file = os.path.join(self.path_root, self.input_file_name)
+        name = os.path.basename(self.input_file_name)
         if os.path.isfile(path_input_file):
-            input_file = open(self.input_file_name, mode='r', encoding='utf8')
+            with open(self.input_file_name, mode='r', encoding='utf8') as input_file:
+                title_str = input_file.readline()
+                if title_str != TITLE_STR:
+                    str_out_log_error = f'Файл {name} содержит ошибочный заголовок {title_str[:-1]}'
+                    print(str_out_log_error)
+                    print('Игнорируем его в рассчете!')
+                    return False
+                sec_id = None
+                for line in input_file:
+                    if re.match(TICKER_ENTRY_RE, line) is None:
+                        str_out_log_error = f'В файле {name} содержится ошибочная строка {line[:-1]}'
+                        print(str_out_log_error)
+                        print('Игнорируем ее в рассчете!')
+                    else:
+                        sec_id, trade_time, price, quantity = line.split(',')
+                        self.ticker_price_list.append(float(price))
+                self.ticker_name = sec_id
+                self.count_line_in_ticker = len(self.ticker_price_list)
+                if self.count_line_in_ticker == 0:
+                    return_result = False
         else:
-            sys.exit(f'Файл {self.input_file_name} не найден в текущем каталоге!')
-        title_str = input_file.readline()
-        if title_str != TITLE_STR:
-            input_file.close()
-            print(title_str)
-            sys.exit('Неверный заголовок CSV-файла')
-        sec_id = None
-        for line in input_file:
-            if re.match(TICKER_ENTRY_RE, line) is None:
-                input_file.close()
-                print(line)
-                sys.exit('Не соотвествие строки файла шаблону')
-            else:
-                sec_id, trade_time, price, quantity = line.split(',')
-                self.ticker_price_list.append(float(price))
-        self.ticker_name = sec_id
-        self.count_line_in_ticker = len(self.ticker_price_list)
-        input_file.close()
+            str_out_log_error = f'Файл {name} не найден в заданном каталоге!'
+            print(str_out_log_error)
+            return False
+        return return_result
 
     def run(self) -> None:
         """
         Шаблонный метод - чтение файла тикера и рассчет по нему
         волатильности для этого тикера
         """
-        self.read_input_file()
-        self.calculate_volatility()
+        if self.read_input_file():
+            self.calculate_volatility()
 
     @abstractmethod
     def calculate_volatility(self) -> None:
@@ -235,7 +244,7 @@ class VolatilityTickersOnDir:
                 tick = tk.get_volatility()
                 name_tick = tk.get_ticker_name()
                 del tk
-                if tick == 0.0:
+                if tick == 0.0 and name_tick is not None:
                     self.zero_tickers_volatility_list.append(name_tick)
                 else:
                     self.tickers_volatility_list.append([tick, name_tick])

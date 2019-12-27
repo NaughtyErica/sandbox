@@ -3,7 +3,7 @@
 from astrobox.space_field import SpaceField
 from astrobox.core import Drone, Unit
 from astrobox.utils import nearest_angle_distance
-from strategies import *
+from python_base_diploma.strategies import *
 from robogame_engine.geometry import Vector
 from robogame_engine.theme import theme
 

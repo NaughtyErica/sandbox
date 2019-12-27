@@ -1,6 +1,6 @@
 import tornado.ioloop
 from tornado.httpclient import AsyncHTTPClient
-
+# Не работает
 urls = ['http://www.google.com', 'http://www.yandex.ru', 'http://www.python.org']
 
 
