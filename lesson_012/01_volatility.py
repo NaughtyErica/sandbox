@@ -80,6 +80,7 @@ import os
 
 TICKER_ENTRY_RE = '\w{3}\d{1},\d{2}:\d{2}:\d{2},\d{1,}.\d{4},\d{1,}'
 TITLE_STR = 'SECID,TRADETIME,PRICE,QUANTITY\n'
+SOURCE_DIR = 'trades'
 
 
 class AbstractReadTickerFileClass(metaclass=ABCMeta):
@@ -255,15 +256,14 @@ class VolatilityTickersOnDir:
 
 @time_track
 def main():
-    tickers = VolatilityTickersOnDir(source_dir='trades')
+    tickers = VolatilityTickersOnDir(source_dir=SOURCE_DIR)
     tickers.execute()
-
-    print('Максимальная волатильность:')
-    for i in [2, 1, 0]:
-        print(tickers.tickers_volatility_list[i][1], '--', '%.2f' % (tickers.tickers_volatility_list[i][0]))
     max_element = tickers.count_tickers_non_zero
-    print('Минимальная волатильность:')
+    print('Максимальная волатильность:')
     for i in [max_element - 1, max_element - 2, max_element - 3]:
+        print(tickers.tickers_volatility_list[i][1], '--', '%.2f' % (tickers.tickers_volatility_list[i][0]))
+    print('Минимальная волатильность:')
+    for i in [2, 1, 0]:
         print(tickers.tickers_volatility_list[i][1], '--', '%.2f' % (tickers.tickers_volatility_list[i][0]))
     print('Нулевая волатильность:')
     for ticker in tickers.zero_tickers_volatility_list:
@@ -273,3 +273,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+# зачет!

@@ -26,29 +26,30 @@ import os
 
 TICKER_ENTRY_RE = '\w{3}\d{1},\d{2}:\d{2}:\d{2},\d{1,}.\d{4},\d{1,}'
 TITLE_STR = 'SECID,TRADETIME,PRICE,QUANTITY\n'
-SOURCE_DIR = 'trades'
 
 
 class VolatilityTicker(threading.Thread):
     """
     Класс рассчета волатильности тикера из одного файла
-    с применением Lock, блокирубщего одновременный доступ потоков
-    к критическому участку кода, в котором производится заполенние
-    общих для всех потоков списков
+    с применением семафора, объявленного в вызывающем процессе, для блокировки потока
+    Применение семафора выбрано для возможности множественного доступа в общему коду,
+    выполняющего добавление элементов в списки, так как метод append() списка является
+    атомарной операцией. В методе run() оставлены закомментрованные выводы в консоль,
+    демострирующие блокировку и освобожение критичного участка кода
     """
-    def __init__(self, input_file_name, tickers_list, zero_tickers_list, locker, *args, **kwargs):
+    def __init__(self, input_file_name, tickers_list, zero_tickers_list, semaphore, *args, **kwargs):
         """
         :param input_file_name имя входного файла
         :param tickers_list список не нулевых значений тикеров
         :param zero_tickers_list сисок имен тикеров с нулевым значением
-        :param locker  блокировщик процесса передачи
+        :param semaphore семафор для блокировки потока и передачи
         вычисленных значений в вышеуказанные списки
         *args, **kwargs уходят к родителю
         """
         super().__init__(*args, **kwargs)
         self.tickers_list = tickers_list
         self.zero_tickers_list = zero_tickers_list
-        self.tickers_list_locker = locker
+        self.tickers_list_semaphore = semaphore
         self.input_file_name = input_file_name
         self.path_root = os.path.dirname(__file__)
         self.ticker_price_list = []
@@ -113,18 +114,24 @@ class VolatilityTicker(threading.Thread):
         """
         Чтение файла тикера и рассчет по нему
         волатильности для этого тикера
-        постановка блокировки, заполение списков,
-        сняте блокировки
+        постановка запроса на блокировку уменьшением счетчика на _value 1,
+        заполение списков,
+        сняте запроса на блокировку увеличением счетчика _value на 1
         """
         if self.read_input_file():
             self.calculate_volatility()
 
-        self.tickers_list_locker.acquire()
+        self.tickers_list_semaphore.acquire()
+        # print(f'Доступ получил процесс файла {os.path.basename(self.input_file_name)} осталось '
+        #       f'{self.tickers_list_semaphore._value} входов\n')
         if self.volatility == 0.0 and self.ticker_name is not None:
             self.zero_tickers_list.append(self.ticker_name)
         else:
             self.tickers_list.append([self.volatility, self.ticker_name])
-        self.tickers_list_locker.release()
+
+        self.tickers_list_semaphore.release()
+        # print(f'Оосвободил процесс файла --- {os.path.basename(self.input_file_name)} осталось '
+        #       f'{self.tickers_list_semaphore._value} входов \n')
 
 
 class VolatilityTickersOnDir:
@@ -152,23 +159,25 @@ class VolatilityTickersOnDir:
         Заполение вычисленных там значений в списки
         self.tickers_volatility_list
         self.zero_tickers_volatility_list
+        Счетчик семафора value=5 устанавливаем в максимальное значение, полученное опытным путем
         """
         for dir_path, dir_names, file_names in os.walk(self.path_source):
             for file_name in file_names:
                 path_input_file = os.path.join(self.path_source, file_name)
                 self.input_file_name_list.append(path_input_file)
 
-        locker_for_ticker_list = threading.Lock()
-        tickers = [VolatilityTicker(input_file_name=name,
-                                    tickers_list=self.tickers_volatility_list,
-                                    zero_tickers_list=self.zero_tickers_volatility_list,
-                                    locker=locker_for_ticker_list)
-                   for name in self.input_file_name_list]
+        semaphore_for_ticker_list = threading.BoundedSemaphore(value=5)
+        with semaphore_for_ticker_list:
+            tickers = [VolatilityTicker(input_file_name=name,
+                                        tickers_list=self.tickers_volatility_list,
+                                        zero_tickers_list=self.zero_tickers_volatility_list,
+                                        semaphore=semaphore_for_ticker_list)
+                       for name in self.input_file_name_list]
 
-        for ticker in tickers:
-            ticker.start()
-        for ticker in tickers:
-            ticker.join()
+            for ticker in tickers:
+                ticker.start()
+            for ticker in tickers:
+                ticker.join()
 
     def print_result(self):
         """
@@ -176,12 +185,12 @@ class VolatilityTickersOnDir:
         """
         self.tickers_volatility_list.sort()
         self.zero_tickers_volatility_list.sort()
-        max_element = len(self.tickers_volatility_list)
         print('Максимальная волатильность:')
-        for i in [max_element - 1, max_element - 2, max_element - 3]:
-            print(self.tickers_volatility_list[i][1], '--', '%.2f' % (self.tickers_volatility_list[i][0]))
-        print('Минимальная волатильность:')
         for i in [2, 1, 0]:
+            print(self.tickers_volatility_list[i][1], '--', '%.2f' % (self.tickers_volatility_list[i][0]))
+        max_element = len(self.tickers_volatility_list)
+        print('Минимальная волатильность:')
+        for i in [max_element - 1, max_element - 2, max_element - 3]:
             print(self.tickers_volatility_list[i][1], '--', '%.2f' % (self.tickers_volatility_list[i][0]))
         print('Нулевая волатильность:')
         for ticker in self.zero_tickers_volatility_list:
@@ -191,12 +200,10 @@ class VolatilityTickersOnDir:
 
 @time_track
 def main():
-    tickers = VolatilityTickersOnDir(source_dir=SOURCE_DIR)
+    tickers = VolatilityTickersOnDir(source_dir='trades')
     tickers.execute()
     tickers.print_result()
 
 
 if __name__ == '__main__':
     main()
-
-# зачет!
