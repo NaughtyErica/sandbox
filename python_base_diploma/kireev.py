@@ -17,18 +17,23 @@ class UrikDrone(Drone):
         self.table_content_asteroids = []
         self.table_distance_form_mather_ship = []
         self.count_asteroids = 0
+        self.count_drones_in_my_team = 0
 
     def on_born(self):
+        self.my_team.append(self)
         self.count_asteroids = len(self.asteroids)
         self.number_visited_asteroid = randint(0, self.count_asteroids - 1)
         self.target = self.asteroids[self.number_visited_asteroid]
+
         # print(f'Первая цель {self.target.coord}. Астероидов всего {self.count_asteroids}. '
         #       f'Летим на астероид номер {self.number_visited_asteroid}')
         self.move_at(self.target)
-        self.my_team.append(self)
+
 
     # Найти ближайший непустой
     def _get_my_asteroid(self):
+        self.count_drones_in_my_team = len(self.my_team)
+        print(self.count_drones_in_my_team, self.my_team)
         return_aster = None
         for aster in self.asteroids:
             if aster.cargo.payload > 0:
@@ -67,5 +72,5 @@ class UrikDrone(Drone):
         self.move_at(self.target)
 
     def on_wake_up(self):
-        print('Шляпа!')
+        print('Порожняк')
         # self.scene.parent_conn.send(GAME_OVER)
