@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 # Заполнить все поля в билете на самолет.
-# Создать функцию, принимающую параметры: ФИО, откуда, куда, дата вылета,
+# Создать функцию, принимающую параметры: ФИО, откуда,
+# куда, дата вылета,
 # и заполняющую ими шаблон билета Skillbox Airline.
 # Шаблон взять в файле lesson_013/images/ticket_template.png
 # Пример заполнения lesson_013/images/ticket_sample.png
@@ -40,9 +41,14 @@ class AbstractMakerTicket(metaclass=ABCMeta):
         self.city_to = city_to
         self.dt_dep = dt_dep
         self.path_root = os.path.dirname(__file__)
-        self.full_path_font = os.path.join(self.path_root, SOURCE_DIR, FONT_NAME)
-        self.full_path_ticket_temp = os.path.join(self.path_root, SOURCE_DIR, TICKET_TEMPLATE)
-        self.full_path_ticket_complete = os.path.join(self.path_root, SOURCE_DIR, TICKET_COMPLETE)
+        self.full_path_font = os.path.join(self.path_root,
+                                           SOURCE_DIR, FONT_NAME)
+        self.full_path_ticket_temp = os.path.join(self.path_root,
+                                                  SOURCE_DIR,
+                                                  TICKET_TEMPLATE)
+        self.full_path_ticket_complete = os.path.join(self.path_root,
+                                                      SOURCE_DIR,
+                                                      TICKET_COMPLETE)
         self.image_ticket = Image.open(self.full_path_ticket_temp)
 
     def draw(self):
@@ -52,14 +58,22 @@ class AbstractMakerTicket(metaclass=ABCMeta):
         """
         draw = ImageDraw.Draw(self.image_ticket)
         font = ImageFont.truetype(self.full_path_font, size=13)
-        draw.line((45, 141, 230, 141), width=1, fill=ImageColor.colormap['white'])
-        draw.text((45, 130), f"{self.first_name} {self.last_name}", font=font, fill=ImageColor.colormap['black'])
-        draw.line((45, 210, 200, 210), width=1, fill=ImageColor.colormap['white'])
-        draw.text((45, 197), self.city_from, font=font, fill=ImageColor.colormap['black'])
-        draw.line((45, 276, 200, 276), width=1, fill=ImageColor.colormap['white'])
-        draw.text((45, 265), self.city_to, font=font, fill=ImageColor.colormap['black'])
-        draw.line((286, 276, 330, 276), width=1, fill=ImageColor.colormap['white'])
-        draw.text((286, 265), self.dt_dep, font=font, fill=ImageColor.colormap['black'])
+        draw.line((45, 141, 230, 141), width=1,
+                  fill=ImageColor.colormap['white'])
+        draw.text((45, 130), f"{self.first_name} {self.last_name}",
+                  font=font, fill=ImageColor.colormap['black'])
+        draw.line((45, 210, 200, 210), width=1,
+                  fill=ImageColor.colormap['white'])
+        draw.text((45, 197), self.city_from, font=font,
+                  fill=ImageColor.colormap['black'])
+        draw.line((45, 276, 200, 276), width=1,
+                  fill=ImageColor.colormap['white'])
+        draw.text((45, 265), self.city_to, font=font,
+                  fill=ImageColor.colormap['black'])
+        draw.line((286, 276, 330, 276), width=1,
+                  fill=ImageColor.colormap['white'])
+        draw.text((286, 265), self.dt_dep, font=font,
+                  fill=ImageColor.colormap['black'])
         self.image_ticket.show()
 
     @abstractmethod
@@ -80,7 +94,8 @@ class AbstractMakerTicket(metaclass=ABCMeta):
 
 class MakerTicket(AbstractMakerTicket):
     """
-    Реализация заполнителя билета с помощью передачи параметров при создании объекта класса
+    Реализация заполнителя билета с помощью передачи
+    параметров при создании объекта класса
     """
 
     def save(self):
@@ -124,7 +139,9 @@ class MakerTicketArgs(AbstractMakerTicket):
         parser.add_argument('city_to', type=str, help='City destination')
         parser.add_argument('dt_dep', type=str, help='Date departure')
         parser.add_argument('--save_to', type=str, default=None,
-                            help='Default dir: None. \n When you specify a directory, the ticket will be saved to it')
+                            help='Default dir: None. \n '
+                                 'When you specify a directory, '
+                                 'the ticket will be saved to it')
         args = parser.parse_args()
 
         super().__init__(first_name=args.first_name,
@@ -140,14 +157,18 @@ class MakerTicketArgs(AbstractMakerTicket):
         то производим запись готового билета в указанную папку
         """
         if self.save_to:
-            path_dir_for_save_ticket = os.path.join(self.path_root, self.save_to)
+            path_dir_for_save_ticket = os.path.join(self.path_root,
+                                                    self.save_to)
             os.makedirs(path_dir_for_save_ticket)
-            full_path_ticket_complete = os.path.join(self.path_root, self.save_to, TICKET_COMPLETE)
+            full_path_ticket_complete = os.path.join(self.path_root,
+                                                     self.save_to,
+                                                     TICKET_COMPLETE)
             self.image_ticket.save(full_path_ticket_complete)
             print(f'Ticker complete saved at  {full_path_ticket_complete}')
 
 
-mt = MakerTicket(first_name='ЮРИЙ', last_name='КИРЕЕВ', city_from='БИЙСК', city_to='МОСКВА', dt_dep='01.07')
+mt = MakerTicket(first_name='ЮРИЙ', last_name='КИРЕЕВ', city_from='БИЙСК',
+                 city_to='МОСКВА', dt_dep='01.07')
 mt.execute()
 
 # mta = MakerTicketArgs()
