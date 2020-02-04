@@ -36,14 +36,14 @@ from bowling import get_score
 
 class CalcScore:
 
-    def __init__(self):
+    def __init__(self) -> None:
         parser = argparse.ArgumentParser(description='Calculator score bowling frame set')
         parser.add_argument('game_result', type=str, help='String with game result')
         arg = parser.parse_args()
         self.game_result = arg.game_result
         self.score = None
 
-    def execute(self):
+    def execute(self) -> None:
         self.score = get_score(game_result=self.game_result)
         print(f"Количество очков для результатов {self.game_result} - {self.score}")
 

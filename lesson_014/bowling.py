@@ -1,5 +1,4 @@
-
-
+# -*- coding: utf-8 -*-
 TYPE_FRAME_CHAR_DIGIT = '123456789'
 
 
@@ -45,8 +44,8 @@ def get_score(game_result: str = '') -> int:
             if sum_digits <= 9:
                 score += sum_digits
             else:
-                raise ErrorSumFrame(f"Некорректное значание фрэйма <{code_frame}> \n "
-                                    f"Сумма {sum_digits} не может быть бользе 9")
+                raise ErrorSumFrame(f"Некорректное значание фрэйма <{code_frame}> в записи игры {game_result}\n "
+                                    f"Сумма {sum_digits} не может быть больше 9")
         else:
             raise ErrorInputData(f"Некорректное значание фрэйма <{code_frame}> \n "
                                  f"Недопустимые символы или их комбинация")
@@ -54,4 +53,5 @@ def get_score(game_result: str = '') -> int:
 
 
 if __name__ == '__main__':
-    print(get_score(game_result='X4/34-45-23'))
+    game_res = 'XXXXX'
+    print(get_score(game_result=game_res))
