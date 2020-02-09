@@ -39,19 +39,26 @@ def get_score(game_result: str = '') -> int:
             score += int(code_frame[1])
         elif code_frame[0] in TYPE_FRAME_CHAR_DIGIT and code_frame[1] == '-':
             score += int(code_frame[0])
+        elif code_frame == '--':
+            pass
         elif code_frame[0] in TYPE_FRAME_CHAR_DIGIT and code_frame[1] in TYPE_FRAME_CHAR_DIGIT:
             sum_digits = int(code_frame[0]) + int(code_frame[1])
             if sum_digits <= 9:
                 score += sum_digits
             else:
-                raise ErrorSumFrame(f"Некорректное значание фрэйма <{code_frame}> в записи игры {game_result}\n "
-                                    f"Сумма {sum_digits} не может быть больше 9")
+                message_error = f"Некорректное значание фрэйма <{code_frame}> в записи игры {game_result}\n" \
+                                f"Сумма {sum_digits} не может быть больше 9"
+                print(message_error)
+                raise ErrorSumFrame(message_error)
         else:
-            raise ErrorInputData(f"Некорректное значание фрэйма <{code_frame}> \n "
-                                 f"Недопустимые символы или их комбинация")
+            message_error = f"Недопустимое значание фрэйма <{code_frame}>\n" \
+                            f"Недопустимые символы или их комбинация"
+            print(message_error)
+            raise ErrorInputData(message_error)
+
     return score
 
 
 if __name__ == '__main__':
-    game_res = 'XXXXX'
+    game_res = 'ab'
     print(get_score(game_result=game_res))

@@ -17,36 +17,33 @@ random.seed(917)
 
 
 def main():
-    totalCounter = Counter()
-    carCounter = Counter("cars")
-    commercialCounter = Counter("vans", "trucks")
+    total_counter = Counter()
+    car_counter = Counter("cars")
+    commercial_counter = Counter("vans", "trucks")
 
     multiplexer = Multiplexer()
-    for eventName, callback in (("cars", carCounter), ("vans", commercialCounter),
-                                ("trucks", commercialCounter)):
-        multiplexer.connect(eventName, callback)
-        multiplexer.connect(eventName, totalCounter)
+    for event_name, callback in (("cars", car_counter), ("vans", commercial_counter),
+                                 ("trucks", commercial_counter)):
+        multiplexer.connect(event_name, callback)
+        multiplexer.connect(event_name, total_counter)
 
     for event in generate_random_events(100):
         multiplexer.send(event)
-    print("After 100 active events:  cars={} vans={} trucks={} total={}".
-          format(carCounter.cars, commercialCounter.vans,
-                 commercialCounter.trucks, totalCounter.count))
+    print(f"After 100 active events:  cars={car_counter.cars} vans={commercial_counter.vans} "
+          f"trucks={commercial_counter.trucks} total={total_counter.count}")
 
     multiplexer.state = Multiplexer.DORMANT
     for event in generate_random_events(100):
         multiplexer.send(event)
-    print("After 100 dormant events: cars={} vans={} trucks={} total={}"
-          .format(carCounter.cars, commercialCounter.vans,
-                  commercialCounter.trucks, totalCounter.count))
-    
+    print(f"After 100 active events:  cars={car_counter.cars} vans={commercial_counter.vans} "
+          f"trucks={commercial_counter.trucks} total={total_counter.count}")
+
     multiplexer.state = Multiplexer.ACTIVE
     for event in generate_random_events(100):
         multiplexer.send(event)
-    print("After 100 active events:  cars={} vans={} trucks={} total={}"
-          .format(carCounter.cars, commercialCounter.vans,
-                  commercialCounter.trucks, totalCounter.count))
-    
+    print(f"After 100 active events:  cars={car_counter.cars} vans={commercial_counter.vans} "
+          f"trucks={commercial_counter.trucks} total={total_counter.count}")
+
 
 def generate_random_events(count):
     vehicles = (("cars",) * 11) + (("vans",) * 3) + ("trucks",)
@@ -88,23 +85,23 @@ class Multiplexer:
     ACTIVE, DORMANT = ("ACTIVE", "DORMANT")
 
     def __init__(self):
-        self.callbacksForEvent = collections.defaultdict(list)
+        self.callbacks_for_event = collections.defaultdict(list)
         self.state = Multiplexer.ACTIVE
 
-    def connect(self, eventName, callback):
+    def connect(self, event_name, callback):
         if self.state == Multiplexer.ACTIVE:
-            self.callbacksForEvent[eventName].append(callback)
+            self.callbacks_for_event[event_name].append(callback)
 
-    def disconnect(self, eventName, callback=None):
+    def disconnect(self, event_name, callback=None):
         if self.state == Multiplexer.ACTIVE:
             if callback is None:
-                del self.callbacksForEvent[eventName]
+                del self.callbacks_for_event[event_name]
             else:
-                self.callbacksForEvent[eventName].remove(callback)
+                self.callbacks_for_event[event_name].remove(callback)
 
     def send(self, event):
         if self.state == Multiplexer.ACTIVE:
-            for callback in self.callbacksForEvent.get(event.name, ()):
+            for callback in self.callbacks_for_event.get(event.name, ()):
                 callback(event)
 
 
