@@ -55,7 +55,7 @@ db.close()
 # обёртка, которая позволит использовать сопрограммы вместе с оператором with.
 # Класс-обёртка, который можно использовать для произвольных сопрограмм,
 # не только для writer из примера:
-class wrapper():
+class wrapper:
     def __init__(self, coro, *args, **kwargs):
         self.coro = coro(*args, **kwargs)
 

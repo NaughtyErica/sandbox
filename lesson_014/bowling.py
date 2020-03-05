@@ -12,11 +12,15 @@ class ErrorSumFrame(Exception):
 
 def get_score(game_result: str = '') -> int:
 
+    if game_result is None:
+        print('The --game_result parameter in the command line is required or -h for help!')
+        exit(1)
     frame_code_list = []
     game_result_lst = list(game_result)
     length_game_result = len(game_result_lst)
     i = 0
     score = 0
+    one_digit_in_end_str = False
     while i < length_game_result:
         if game_result_lst[i] == "X":
             code_frame = "X"
@@ -25,10 +29,16 @@ def get_score(game_result: str = '') -> int:
             code_frame = game_result_lst[i]
             i += 1
             if i == length_game_result:
+                one_digit_in_end_str = True
                 break
             code_frame += game_result_lst[i]
             i += 1
         frame_code_list.append(code_frame)
+
+    if one_digit_in_end_str:
+        message_error = f"Недопустимое значание последнего фрэйма <{game_result[-1:]}>\n"
+        print(message_error)
+        raise ErrorInputData(message_error)
 
     for code_frame in frame_code_list:
         if code_frame == 'X':
@@ -50,6 +60,7 @@ def get_score(game_result: str = '') -> int:
                                 f"Сумма {sum_digits} не может быть больше 9"
                 print(message_error)
                 raise ErrorSumFrame(message_error)
+
         else:
             message_error = f"Недопустимое значание фрэйма <{code_frame}>\n" \
                             f"Недопустимые символы или их комбинация"
@@ -60,5 +71,5 @@ def get_score(game_result: str = '') -> int:
 
 
 if __name__ == '__main__':
-    game_res = 'ab'
+    game_res = '1X'
     print(get_score(game_result=game_res))

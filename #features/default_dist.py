@@ -29,6 +29,6 @@ print(new_d)
 
 for key in new_d:
     print(key, new_d[key])
-
+print('-------------------------------')
 for key in reversed(new_d):
     print(key, new_d[key])
