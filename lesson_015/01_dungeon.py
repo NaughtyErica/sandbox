@@ -95,56 +95,58 @@
 
 
 import json
-from pprint import pprint
-import decimal
-import datetime
-
-game_time = 0.0
-game_experience = 0
-
-remaining_time = '123456.0987654321'
-# если изначально не писать число в виде строки - теряется точность!
-field_names = ['current_location', 'current_experience', 'current_date']
-
-with open("rpg.json", "r") as rpg_json_file:
-    map_locations = json.load(rpg_json_file)
-
-# for items in map_locations.values():
-#     for item in items:
-#         if type(item) == dict:
-#             list_keys = item.keys()
-#             for key in list_keys:
-#                 print(key)
-#                 print(item[f'{key}'])
-#                 for elem in item[f'{key}']:
-#                     print(elem)
-#
-#         elif type(item) == str:
-#             print(item)
-# print(map_locations["Location_0_tm0"][1]
-#                    ["Location_1_tm1040"][2]
-#                    ["Location_3_tm33000"][0]
-#                    ["Location_7_tm33300"][0]
-#                    ["Location_10_tm55100"][4]
-#                    ["Location_12_tm0.0987654320"][0])
-#
-# print(map_locations["Location_0_tm0"][2]
-#                    ["Location_2_tm33300"][2]
-#                    ["Location_5_tm55100"][1]
-#                    ["Location_9_tm26000"][1]
-#                    ["Location_11_tm4000"][1]
-#                    ["Location_B2_tm2000"][3]["Hatch_tm159.098765432"])
-#
-
-# Вы находитесь в Location_0_tm0
-# У вас 0 опыта и осталось 123456.0987654321 секунд до наводнения
-# Прошло времени: 00:00
-
-input_location_lst = map_locations["Location_0_tm0"]
-# print(input_location_lst)
+from decimal import *
+import re
 
 
-def action_in_location(input_loc_lst=None):
+def calculate_change_time_experience(killed_mob=None, input_loc=None):
+    global game_experience, remaining_time, game_time
+    if killed_mob:
+        separation_tm = re.split(re_tm, killed_mob)
+        remaining_time = Decimal(remaining_time) - Decimal(separation_tm[1])
+        game_time = Decimal(game_time) + Decimal(separation_tm[1])
+        acquired_experience = re.split(re_tm, re.split(re_exp, killed_mob)[1])[0]
+        game_experience += int(acquired_experience)
+    if input_loc:
+        separation = re.split(re_tm, input_loc)
+        remaining_time = Decimal(remaining_time) - Decimal(separation[1])
+        game_time = Decimal(game_time) + Decimal(separation[1])
+
+
+def final_approach(msg=None):
+    global game_experience, remaining_time, game_time
+    game_time = '0.0'
+    game_experience = 0
+    remaining_time = '123456.0987654321'
+    print(msg)
+    action_in_location(map_locations_act=map_locations)
+
+
+def finish_game_winner_or_no():
+    global game_experience, remaining_time, game_time
+    if float(remaining_time) >= 0.0 and game_experience >= 280:
+        print("Поздравляю с победой! Вы сумели выбраться из подземелья!")
+        exit(0)
+    elif float(remaining_time) >= 0.0 and game_experience < 280:
+        final_approach(msg="Вы не набрали достаточно опыта, чтобы открыть люк!!!\n"
+                           "Такая нелепая смерть в такой близи от выхода!")
+
+
+def action_in_location(map_locations_act=None):
+    global game_experience, remaining_time, game_time
+    name_loc = ''
+    for name_loc in map_locations_act.keys():
+        pass
+    input_loc_lst = map_locations_act[name_loc]
+    if float(remaining_time) <= 0.0:
+        final_approach(msg="Вы не успели открыть люк!!! НАВОДНЕНИЕ!!!\n"
+                           "Такая нелепая смерть в самом рассвете сил!")
+    print(f"Вы находитесь в {name_loc}\n"
+          f"У вас {game_experience} опыта и осталось {remaining_time} секунд до наводнения\n"
+          f"Прошло времени: {game_time}\n")
+    if name_loc == "Hatch_tm159.098765432":
+        finish_game_winner_or_no()
+
     mob_lst = []
     keys_locs_lst = []
     dicts_locs_lst = []
@@ -155,61 +157,49 @@ def action_in_location(input_loc_lst=None):
                 dicts_locs_lst.append(item)
         elif type(item) == str:
             mob_lst.append(item)
-
-    count_mob = len(mob_lst)
-    count_loc = len(dicts_locs_lst)
-
-    print("Внутри вы видите:")
-    num_mob = 1
-    for mob in mob_lst:
-        print(f"— Монстра №{str(num_mob)} - {mob}")
-        num_mob += 1
-    i = 0
-    num_loc = 1
-    for key_loc in keys_locs_lst:
-        print(f"— Вход в локацию №{num_loc} - {key_loc}")
-        num_loc += 1
-        # key_str = f"{key_loc}"
-        # print(f"— Ее содержание:{dicts_locs_lst[i][key_str]}")
-        # i += 1
-
-    # for dict_loc in dicts_locs_lst:
-    #     print(f"— Ее содержание:{dict_loc}")
-    select = input(f"Выберите действие:\n1.Атаковать монстра\n2.Перейти в другую локацию\n3.Сдаться и выйти из игры\n")
-    if select == '1':
-        num_selected_mob = input("Укажите номер монстра для атаки ")
-        print(f"Выбран монстр для атаки под номером {num_selected_mob}")
-    elif select == '2':
-        num_selected_loc = input("Укажите номер локации для входа ")
-        print(f"Выбрана локация под номером {num_selected_loc}")
-    else:
-        exit(0)
-
-
-while True:
-    print(f"Вы находитесь в Location_0_tm0\n"
-          f"У вас {game_experience} опыта и осталось {remaining_time} секунд до наводнения\n"
-          f"Прошло времени: {game_time}\n")
-
-    action_in_location(input_location_lst)
+    while True:
+        print("Внутри вы видите:")
+        num_mob = 1
+        for mob in mob_lst:
+            print(f"— Монстра №{str(num_mob)} - {mob}")
+            num_mob += 1
+        i = 0
+        num_loc = 1
+        for key_loc in keys_locs_lst:
+            print(f"— Вход в локацию №{num_loc} - {key_loc}")
+            num_loc += 1
+        select = input(f"Выберите действие:\n"
+                       f"1.Атаковать монстра\n"
+                       f"2.Перейти в другую локацию\n"
+                       f"3.Сдаться и выйти из игры\n")
+        if select == '1':
+            num_selected_mob = input("Укажите номер монстра для атаки ")
+            print(f"Атакован монстр под номером {num_selected_mob}")
+            del_mob = mob_lst[int(num_selected_mob) - 1]
+            calculate_change_time_experience(killed_mob=del_mob)
+            del mob_lst[int(num_selected_mob) - 1]
+            print(f"Уничтожен монстр {del_mob}")
+        elif select == '2':
+            num_selected_loc = input("Укажите номер локации для входа ")
+            name_col_for_new_level = keys_locs_lst[int(num_selected_loc) - 1]
+            print(f"Выбрана локация {name_col_for_new_level} под номером {num_selected_loc}")
+            print(f"{'-'*50}")
+            calculate_change_time_experience(input_loc=name_col_for_new_level)
+            new_level_map = dicts_locs_lst[int(num_selected_loc) - 1]
+            action_in_location(map_locations_act=new_level_map)
+        else:
+            exit(0)
 
 
+if __name__ == '__main__':
+    re_tm = r'_tm'
+    re_exp = r'_exp'
+    game_time = '0.0'
+    game_experience = 0
+    remaining_time = '123456.0987654321'
+    field_names = ['current_location', 'current_experience', 'current_date']
 
+    with open("rpg.json", "r") as rpg_json_file:
+        map_locations = json.load(rpg_json_file)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    action_in_location(map_locations_act=map_locations)
