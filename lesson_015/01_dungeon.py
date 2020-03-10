@@ -94,6 +94,7 @@
 # Учитывая время и опыт, не забывайте о точности вычислений!
 import csv
 import json
+import os
 from decimal import *
 import re
 import datetime
@@ -147,8 +148,6 @@ def action_in_location(map_locations_act=None):
           f"Прошло времени: {game_time}\n")
     if name_loc == "Hatch_tm159.098765432":
         finish_game_winner_or_no()
-
-
     mob_lst = []
     keys_locs_lst = []
     dicts_locs_lst = []
@@ -159,6 +158,8 @@ def action_in_location(map_locations_act=None):
                 dicts_locs_lst.append(item)
         elif type(item) == str:
             mob_lst.append(item)
+    count_mobs = len(mob_lst)
+    count_locs = len(keys_locs_lst)
     while True:
         print("Внутри вы видите:")
         num_mob = 1
@@ -174,36 +175,47 @@ def action_in_location(map_locations_act=None):
                        f"1.Атаковать монстра\n"
                        f"2.Перейти в другую локацию\n"
                        f"3.Сдаться и выйти из игры\n")
-        if select == '1':
+        if select == '1' and count_mobs > 0:
             num_selected_mob = input("Укажите номер монстра для атаки ")
-            print(f"Атакован монстр под номером {num_selected_mob}")
-            del_mob = mob_lst[int(num_selected_mob) - 1]
-            calculate_change_time_experience(killed_mob=del_mob)
-            log_str = {'current_location': name_loc,
-                       'current_experience': str(game_experience),
-                       'current_date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                       'game_time': game_time,
-                       'remaining_time': remaining_time}
-            writer_log_csv.writerow(log_str)
-
-            del mob_lst[int(num_selected_mob) - 1]
-            print(f"Уничтожен монстр {del_mob}")
+            try:
+                num_selected_mob_int = int(num_selected_mob)
+                if num_selected_mob_int <= count_mobs:
+                    print(f"Атакован монстр под номером {num_selected_mob}")
+                    del_mob = mob_lst[int(num_selected_mob) - 1]
+                    calculate_change_time_experience(killed_mob=del_mob)
+                    log_str = {'current_location': name_loc,
+                               'current_experience': str(game_experience),
+                               'current_date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                               'game_time': game_time,
+                               'remaining_time': remaining_time}
+                    writer_log_csv.writerow(log_str)
+                    del mob_lst[int(num_selected_mob) - 1]
+                    count_mobs -= 1
+                    print(f"Уничтожен монстр {del_mob}")
+                else:
+                    print(f"Все монстры уничтожены!")
+            except ValueError as exc:
+                print(f'Ошибка типа данных: {exc}, введите число')
         elif select == '2':
             num_selected_loc = input("Укажите номер локации для входа ")
-            name_col_for_new_level = keys_locs_lst[int(num_selected_loc) - 1]
-            print(f"Выбрана локация {name_col_for_new_level} под номером {num_selected_loc}")
-            print(f"{'-'*50}")
-            calculate_change_time_experience(input_loc=name_col_for_new_level)
-            log_str = {'current_location': name_col_for_new_level,
-                       'current_experience': str(game_experience),
-                       'current_date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                       'game_time': game_time,
-                       'remaining_time': remaining_time}
-            writer_log_csv.writerow(log_str)
-            new_level_map = dicts_locs_lst[int(num_selected_loc) - 1]
-
-            action_in_location(map_locations_act=new_level_map)
-        else:
+            try:
+                num_selected_loc_int = int(num_selected_loc)
+                if num_selected_loc_int <= count_locs:
+                    name_col_for_new_level = keys_locs_lst[num_selected_loc_int - 1]
+                    print(f"Выбрана локация {name_col_for_new_level} под номером {num_selected_loc}")
+                    print(f"{'-'*50}")
+                    calculate_change_time_experience(input_loc=name_col_for_new_level)
+                    log_str = {'current_location': name_col_for_new_level,
+                               'current_experience': str(game_experience),
+                               'current_date': datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                               'game_time': game_time,
+                               'remaining_time': remaining_time}
+                    writer_log_csv.writerow(log_str)
+                    new_level_map = dicts_locs_lst[int(num_selected_loc) - 1]
+                    action_in_location(map_locations_act=new_level_map)
+            except ValueError as exc:
+                print(f'Ошибка типа данных: {exc}, введите число')
+        elif select == '3':
             log_file_csv.close()
             exit(0)
 
@@ -215,12 +227,12 @@ if __name__ == '__main__':
     game_experience = 0
     remaining_time = '123456.0987654321'
     field_names = ['current_location', 'current_experience', 'current_date', 'game_time', 'remaining_time']
-    log_file_csv = open('dungeon.csv', 'a')
+    log_file_name = 'dungeon.csv'
+    log_file_exist = os.path.exists(log_file_name)
+    log_file_csv = open(log_file_name, 'a')
     writer_log_csv = csv.DictWriter(log_file_csv, fieldnames=field_names)
-    writer_log_csv.writeheader()
-
+    if not log_file_exist:
+        writer_log_csv.writeheader()
     with open("rpg.json", "r") as rpg_json_file:
         map_locations = json.load(rpg_json_file)
-
     action_in_location(map_locations_act=map_locations)
-
