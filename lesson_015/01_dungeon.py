@@ -102,6 +102,8 @@ import datetime
 
 def calculate_change_time_experience(killed_mob=None, input_loc=None):
     global game_experience, remaining_time, game_time
+    re_tm = r'_tm'
+    re_exp = r'_exp'
     if killed_mob:
         separation_tm = re.split(re_tm, killed_mob)
         remaining_time = Decimal(remaining_time) - Decimal(separation_tm[1])
@@ -124,7 +126,6 @@ def final_approach(msg=None):
 
 
 def finish_game_winner_or_no():
-    global game_experience, remaining_time, game_time, log_file_csv
     if float(remaining_time) >= 0.0 and game_experience >= 280:
         print("Поздравляю с победой! Вы сумели выбраться из подземелья!")
         log_file_csv.close()
@@ -135,7 +136,6 @@ def finish_game_winner_or_no():
 
 
 def action_in_location(map_locations_act=None):
-    global game_experience, remaining_time, game_time, writer_log_csv, log_file_csv
     name_loc = ''
     for name_loc in map_locations_act.keys():
         pass
@@ -143,9 +143,6 @@ def action_in_location(map_locations_act=None):
     if float(remaining_time) <= 0.0:
         final_approach(msg="Вы не успели открыть люк!!! НАВОДНЕНИЕ!!!\n"
                            "Такая нелепая смерть в самом рассвете сил!")
-    print(f"Вы находитесь в {name_loc}\n"
-          f"У вас {game_experience} опыта и осталось {remaining_time} секунд до наводнения\n"
-          f"Прошло времени: {game_time}\n")
     if name_loc == "Hatch_tm159.098765432":
         finish_game_winner_or_no()
     mob_lst = []
@@ -161,21 +158,31 @@ def action_in_location(map_locations_act=None):
     count_mobs = len(mob_lst)
     count_locs = len(keys_locs_lst)
     while True:
+        # ----------------------------
+        print(f"Вы находитесь в {name_loc}\n"
+              f"У вас {game_experience} опыта и осталось {remaining_time} секунд до наводнения\n"
+              f"Прошло времени: {game_time}\n")
+        # -------------------------
         print("Внутри вы видите:")
         num_mob = 1
         for mob in mob_lst:
             print(f"— Монстра №{str(num_mob)} - {mob}")
             num_mob += 1
-        i = 0
+        if len(mob_lst) > 0:
+            menu_str = MENU_LST[0] + MENU_LST[1] + MENU_LST[2] + MENU_LST[3]
+        else:
+            menu_str = MENU_LST[0] + MENU_LST[2] + MENU_LST[3]
         num_loc = 1
         for key_loc in keys_locs_lst:
             print(f"— Вход в локацию №{num_loc} - {key_loc}")
             num_loc += 1
-        select = input(f"Выберите действие:\n"
-                       f"1.Атаковать монстра\n"
-                       f"2.Перейти в другую локацию\n"
-                       f"3.Сдаться и выйти из игры\n")
+
+        select = input(menu_str)
+
         if select == '1' and count_mobs > 0:
+            # TODO Обработку ответов пользователя нужно валидировать (падает если ответ выходит за рамки ожидаемого
+            #  числа), а также вынесите обработку "атаки", "перехода" и т.п. в отдельные методы - очень большой цикл
+            #  вышел
             num_selected_mob = input("Укажите номер монстра для атаки ")
             try:
                 num_selected_mob_int = int(num_selected_mob)
@@ -221,18 +228,22 @@ def action_in_location(map_locations_act=None):
 
 
 if __name__ == '__main__':
-    re_tm = r'_tm'
-    re_exp = r'_exp'
+    MENU_LST = ["Выберите действие:\n",
+                "1.Атаковать монстра\n",
+                "2.Перейти в другую локацию\n",
+                "3.Сдаться и выйти из игры\n"]
+    MAP_FILE_NAME = "rpg.json"
+    LOG_FILE_NAME = 'dungeon.csv'
+    FILED_NAMES = ['current_location', 'current_experience', 'current_date', 'game_time', 'remaining_time']
+
     game_time = '0.0'
-    game_experience = 0
     remaining_time = '123456.0987654321'
-    field_names = ['current_location', 'current_experience', 'current_date', 'game_time', 'remaining_time']
-    log_file_name = 'dungeon.csv'
-    log_file_exist = os.path.exists(log_file_name)
-    log_file_csv = open(log_file_name, 'a')
-    writer_log_csv = csv.DictWriter(log_file_csv, fieldnames=field_names)
-    if not log_file_exist:
+    game_experience = 0
+    log_file_csv = open(LOG_FILE_NAME, 'a')
+    writer_log_csv = csv.DictWriter(log_file_csv, fieldnames=FILED_NAMES)
+
+    if not os.path.exists(LOG_FILE_NAME):
         writer_log_csv.writeheader()
-    with open("rpg.json", "r") as rpg_json_file:
+    with open(MAP_FILE_NAME, "r") as rpg_json_file:
         map_locations = json.load(rpg_json_file)
     action_in_location(map_locations_act=map_locations)
